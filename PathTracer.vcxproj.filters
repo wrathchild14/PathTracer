@@ -77,5 +77,13 @@
     <ClInclude Include="External\ImGui\imstb_truetype.h">
       <Filter>ImGui\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="External\stb_image.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="lena.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
