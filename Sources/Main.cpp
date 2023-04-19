@@ -91,10 +91,11 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-	int WIDTH = 256;
-	int HEIGHT = 256;
-	std::shared_ptr<char[]> image(new char[WIDTH * HEIGHT * 3]);
-	Application application(WIDTH, HEIGHT);
+	/*int WIDTH = 256;
+	int HEIGHT = 256;*/
+
+	// Application application(400, 16.0 / 9.0);
+	Application application(400, 420);
 
 	auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -122,13 +123,19 @@ int main(int, char**)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
 		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
-		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height));
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height), ImVec2(0, 1), ImVec2(1, 0));
 
 		if (ImGui::Button("Render"))
 		{
-			application.Render(image);
-
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, image.get());
+			application.Render();
+			const auto image = application.GetImage();
+			const auto width = application.GetImageWidth();
+			const auto height = application.GetImageHeight();
+			if (image != nullptr)
+			{
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+				             GL_UNSIGNED_BYTE, image);
+			}
 		}
 
 		ImGui::End();
@@ -139,7 +146,7 @@ int main(int, char**)
 		glfwGetFramebufferSize(window, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
 		glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w,
-			clear_color.w);
+		             clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

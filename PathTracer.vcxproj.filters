@@ -92,6 +92,9 @@
     <ClInclude Include="Sources\Vec3.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="Sources\Main.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="lena.png">
