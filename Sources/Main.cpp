@@ -23,6 +23,7 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
+#include <memory>
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -79,16 +80,17 @@ int main(int, char**)
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	bool show_demo_window = false;
-	
-	int width, height, channels;
-	unsigned char * image = stbi_load("lena.png", &width, &height, &channels, 0);
+
 	// Texture
 	GLuint texture;
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	const int WIDTH = 256;
+	const int HEIGHT = 256;
+	std::shared_ptr< char[]> image(new  char[WIDTH * HEIGHT * 3]);
 
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -114,9 +116,29 @@ int main(int, char**)
 
 		ImGui::Begin("Renderer (just an image for now)");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		int viewport_width = ImGui::GetContentRegionAvail().x;
-		int viewport_height = ImGui::GetContentRegionAvail().y;
+		int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
+		int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
 		ImGui::Image((void*)(intptr_t)texture, ImVec2(viewport_width, viewport_height));
+
+		if (ImGui::Button("Render")) {
+			for (int j = 0; j < WIDTH; j++) {
+				for (int i = 0; i < HEIGHT; i++) {
+					auto r = double(i) / (WIDTH - 1);
+					auto g = double(j) / (HEIGHT - 1);
+					auto b = 0.25;
+
+					int ir = static_cast<int>(255.999 * r);
+					int ig = static_cast<int>(255.999 * g);
+					int ib = static_cast<int>(255.999 * b);
+
+					image[(i * WIDTH + j) * 3] = ir;
+					image[(i * WIDTH + j) * 3 + 1] = ig;
+					image[(i * WIDTH + j) * 3 + 2] = ib;
+				}
+			}
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, image.get());
+		}
+
 		ImGui::End();
 
 		// Rendering
