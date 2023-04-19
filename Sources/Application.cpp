@@ -1,9 +1,9 @@
 #include "Application.h"
 
 
-Application::Application(int width, double aspect_ratio): width_(width),
-                                                          height_(static_cast<int>(width / aspect_ratio)),
-                                                          aspect_ratio_(aspect_ratio)
+Application::Application(const int width, const double aspect_ratio): width_(width),
+                                                                      height_(static_cast<int>(width / aspect_ratio)),
+                                                                      aspect_ratio_(aspect_ratio)
 {
 	image_ = new unsigned char[height_ * width_ * 3];
 }
@@ -14,40 +14,34 @@ Application::Application(const int width, int height)
 	image_ = new unsigned char[height_ * width_ * 3];
 }
 
+Application::~Application()
+{
+	free(image_);
+}
+
 void Application::Render() const
 {
-	auto viewport_height = 2.0;
-	auto viewport_width = aspect_ratio_ * viewport_height;
-	auto focal_length = 1.0;
+	const auto viewport_height = 2.0;
+	const auto viewport_width = aspect_ratio_ * viewport_height;
+	const auto focal_length = 1.0;
 
-	auto origin = point3(0, 0, 0);
-	auto horizontal = Vec3(viewport_width, 0, 0);
-	auto vertical = Vec3(0, viewport_height, 0);
-	auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focal_length);
+	const auto origin = point3(0, 0, 0);
+	const auto horizontal = Vec3(viewport_width, 0, 0);
+	const auto vertical = Vec3(0, viewport_height, 0);
+	const auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focal_length);
 
-	for (int j = 0; j < width_; j++)
+	for (int j = height_ - 1; j >= 0; --j)
 	{
-		for (int i = 0; i < height_; i++)
+		for (int i = 0; i < width_; ++i)
 		{
-			// auto u = static_cast<double>(i) / (width_ - 1);
-			// auto v = static_cast<double>(j) / (height_ - 1);
-			// Ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			// color pixel_color = RayColor(r);
-
-			color pixel_color(static_cast<double>(i) / (width_ - 1), static_cast<double>(j) / (height_ - 1), 0.25);
-
-			// auto r = static_cast<double>(i) / (width_ - 1);
-			// auto g = static_cast<double>(j) / (height_ - 1);
-			// auto b = 0.25;
+			auto u = static_cast<double>(i) / (width_ - 1);
+			auto v = static_cast<double>(j) / (height_ - 1);
+			Ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
+			color pixel_color = RayColor(r);
 
 			int ir = static_cast<int>(255.999 * pixel_color.x());
 			int ig = static_cast<int>(255.999 * pixel_color.y());
 			int ib = static_cast<int>(255.999 * pixel_color.z());
-
-			// int ir = static_cast<int>(255.999 * r);
-			// int ig = static_cast<int>(255.999 * g);
-			// int ib = static_cast<int>(255.999 * b);
-
 
 			image_[(j * width_ + i) * 3] = ir;
 			image_[(j * width_ + i) * 3 + 1] = ig;
@@ -56,10 +50,22 @@ void Application::Render() const
 	}
 }
 
+bool Application::HitSphere(const point3& center, const double radius, const Ray& r)
+{
+	const Vec3 oc = r.Origin() - center;
+	const auto a = Dot(r.Direction(), r.Direction());
+	const auto b = 2.0 * Dot(oc, r.Direction());
+	const auto c = Dot(oc, oc) - radius * radius;
+	const auto discriminant = b * b - 4 * a * c;
+	return discriminant > 0;
+}
+
 color Application::RayColor(const Ray& r)
 {
-	Vec3 unit_direction = UnitVector(r.Direction());
-	auto t = 0.5 * (unit_direction.y() + 1.0);
+	if (HitSphere(point3(0, 0, -1), 0.6, r))
+		return {1, 0, 0};
+	const Vec3 unit_direction = UnitVector(r.Direction());
+	const auto t = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 

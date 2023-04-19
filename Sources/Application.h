@@ -8,6 +8,7 @@ class Application
 public:
 	Application(int width, double aspect_ratio);
 	Application(int width, int height);
+	~Application();
 
 	void Render() const;
 	unsigned char* GetImage() const;
@@ -17,6 +18,7 @@ public:
 
 private:
 	static color RayColor(const Ray& r);
+	static bool HitSphere(const point3& center, double radius, const Ray& r);
 
 	int width_{};
 	int height_{};

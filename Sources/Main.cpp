@@ -1,7 +1,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <stdio.h>
+#include <cstdio>
 
 #define GL_SILENCE_DEPRECATION
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -23,7 +23,6 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
-#include <memory>
 #include "Application.h"
 
 static void glfw_error_callback(int error, const char* description)
@@ -81,8 +80,6 @@ int main(int, char**)
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	bool show_demo_window = false;
-
 	// Texture
 	GLuint texture;
 	glGenTextures(1, &texture);
@@ -90,14 +87,10 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	const Application application(400, 16.0 / 9.0);
+	// Application application(400, 420);
 
-	/*int WIDTH = 256;
-	int HEIGHT = 256;*/
-
-	// Application application(400, 16.0 / 9.0);
-	Application application(400, 420);
-
-	auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
 #ifdef __EMSCRIPTEN__
@@ -123,7 +116,9 @@ int main(int, char**)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
 		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
-		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height), ImVec2(0, 1), ImVec2(1, 0));
+		// Uvs are for flipping the image
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height),
+		             ImVec2(0, 1), ImVec2(1, 0));
 
 		if (ImGui::Button("Render"))
 		{
@@ -137,7 +132,6 @@ int main(int, char**)
 				             GL_UNSIGNED_BYTE, image);
 			}
 		}
-
 		ImGui::End();
 
 		// Rendering
