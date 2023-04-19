@@ -24,6 +24,7 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 #include <memory>
+#include "Application.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -52,7 +53,7 @@ int main(int, char**)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
 #else
 	// GL 3.0 + GLSL 130
-	const char* glsl_version = "#version 130";
+	auto glsl_version = "#version 130";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
@@ -69,9 +70,10 @@ int main(int, char**)
 	// Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
 	ImGui::StyleColorsDark();
 
@@ -88,11 +90,13 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	const int WIDTH = 256;
-	const int HEIGHT = 256;
-	std::shared_ptr< char[]> image(new  char[WIDTH * HEIGHT * 3]);
 
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	int WIDTH = 256;
+	int HEIGHT = 256;
+	std::shared_ptr<char[]> image(new char[WIDTH * HEIGHT * 3]);
+	Application application(WIDTH, HEIGHT);
+
+	auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
 #ifdef __EMSCRIPTEN__
@@ -116,26 +120,14 @@ int main(int, char**)
 
 		ImGui::Begin("Renderer (just an image for now)");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
-		int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
-		ImGui::Image((void*)(intptr_t)texture, ImVec2(viewport_width, viewport_height));
+		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
+		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height));
 
-		if (ImGui::Button("Render")) {
-			for (int j = 0; j < WIDTH; j++) {
-				for (int i = 0; i < HEIGHT; i++) {
-					auto r = double(i) / (WIDTH - 1);
-					auto g = double(j) / (HEIGHT - 1);
-					auto b = 0.25;
+		if (ImGui::Button("Render"))
+		{
+			application.Render(image);
 
-					int ir = static_cast<int>(255.999 * r);
-					int ig = static_cast<int>(255.999 * g);
-					int ib = static_cast<int>(255.999 * b);
-
-					image[(i * WIDTH + j) * 3] = ir;
-					image[(i * WIDTH + j) * 3 + 1] = ig;
-					image[(i * WIDTH + j) * 3 + 2] = ib;
-				}
-			}
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WIDTH, HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, image.get());
 		}
 
@@ -146,7 +138,8 @@ int main(int, char**)
 		int display_w, display_h;
 		glfwGetFramebufferSize(window, &display_w, &display_h);
 		glViewport(0, 0, display_w, display_h);
-		glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+		glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w,
+			clear_color.w);
 		glClear(GL_COLOR_BUFFER_BIT);
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

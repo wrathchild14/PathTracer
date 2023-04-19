@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Application.cpp" />
     <ClCompile Include="External\ImGui\Backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="External\ImGui\Backends\imgui_impl_opengl3.cpp" />
     <ClCompile Include="External\ImGui\imgui.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="Sources\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Application.h" />
     <ClInclude Include="External\ImGui\Backends\imgui_impl_glfw.h" />
     <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3.h" />
     <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3_loader.h" />
@@ -155,6 +157,7 @@
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
     <ClInclude Include="External\stb_image.h" />
+    <ClInclude Include="Sources\Main.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="lena.png" />

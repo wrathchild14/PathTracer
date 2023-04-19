@@ -48,6 +48,9 @@
     <ClCompile Include="External\ImGui\imgui_widgets.cpp">
       <Filter>ImGui\Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -78,6 +81,12 @@
       <Filter>ImGui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="External\stb_image.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Main.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
