@@ -48,7 +48,7 @@
     <ClCompile Include="External\ImGui\imgui_widgets.cpp">
       <Filter>ImGui\Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
+    <ClCompile Include="Sources\Application.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,10 +83,13 @@
     <ClInclude Include="External\stb_image.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Main.h">
+    <ClInclude Include="Sources\Application.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
+    <ClInclude Include="Sources\Ray.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Vec3.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
