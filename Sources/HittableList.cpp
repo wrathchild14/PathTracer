@@ -6,7 +6,7 @@ bool HittableList::Hit(const Ray& ray, const double t_min, const double t_max, H
 	bool hit_anything = false;
 	auto closest_so_far = t_max;
 
-	for (const auto& object : objects)
+	for (const auto& object : objects_)
 	{
 		if (object->Hit(ray, t_min, closest_so_far, temp_rec))
 		{

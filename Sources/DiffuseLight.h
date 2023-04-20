@@ -5,22 +5,17 @@
 class DiffuseLight : public Material
 {
 public:
-	explicit DiffuseLight(const Color c) : emit(c)
+	explicit DiffuseLight(const Color c) : emit_(c)
 	{
 	}
 
-	bool Scatter(
-		const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered
-	) const override
+	bool Scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override
 	{
 		return false;
 	}
 
-	Color Emitted(const Point3& p) const override
-	{
-		return emit;
-	}
+	Color Emitted(const Point3& p) const override { return emit_; }
 
-public:
-	Color emit;
+private:
+	Color emit_;
 };

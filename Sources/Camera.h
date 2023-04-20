@@ -4,7 +4,7 @@
 class Camera
 {
 public:
-	Camera(Point3 look_from, Point3 look_at, Vec3 up, const double fov, const double aspect_ratio)
+	Camera(const Point3 look_from, const Point3 look_at, const Vec3 up, const double fov, const double aspect_ratio)
 	{
 		const auto theta = DegreesToRadians(fov);
 		const auto h = tan(theta / 2);

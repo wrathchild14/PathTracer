@@ -39,7 +39,7 @@ HittableList Application::GetCornellBox() const
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
 	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
-	
+
 	objects.Add(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light));
 
 	return objects;

@@ -9,7 +9,7 @@ public:
 	{
 	}
 
-	virtual bool Scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override
+	bool Scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered) const override
 	{
 		auto scatter_direction = rec.normal + RandomUnitVector();
 		if (scatter_direction.NearZero())

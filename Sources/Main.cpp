@@ -128,8 +128,8 @@ int main(int, char**)
 		
 		ImGui::Begin("Render window");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
-		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
+		const auto viewport_width = ImGui::GetContentRegionAvail().x;
+		const auto viewport_height = ImGui::GetContentRegionAvail().y;
 		// Uvs are for flipping the image
 		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height),
 		             ImVec2(0, 1), ImVec2(1, 0));

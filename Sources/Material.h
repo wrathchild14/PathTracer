@@ -1,7 +1,6 @@
 #pragma once
-#include "Utility/Common.h"
 
-struct hit_record;
+struct HitRecord;
 
 class Material
 {
