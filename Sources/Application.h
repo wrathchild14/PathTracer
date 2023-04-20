@@ -11,7 +11,7 @@ public:
 	Application(int width, int height);
 	~Application();
 
-	void Render() const;
+	void Render(int fov, int samples_per_pixel) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;

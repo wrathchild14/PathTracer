@@ -87,7 +87,9 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	const Application application(400, 4.0 / 3.0);
-
+	int fov = 50;
+	int samples_per_pixel = 40;
+	
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
@@ -107,31 +109,30 @@ int main(int, char**)
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		/*if (show_demo_window)
-		    ImGui::ShowDemoWindow(&show_demo_window);*/
-
-		ImGui::Begin("Renderer window");
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
-		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
-
+		ImGui::Begin("Properties");
+		ImGui::SliderInt("FOV", &fov, 10, 120);
+		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 100);
 		if (ImGui::Button("Render"))
 		{
-			application.Render();
+			application.Render(fov, samples_per_pixel);
 			const auto image = application.GetImage();
 			const auto width = application.GetImageWidth();
 			const auto height = application.GetImageHeight();
 			if (image != nullptr)
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-				             GL_UNSIGNED_BYTE, image);
+							 GL_UNSIGNED_BYTE, image);
 			}
 		}
-
+		ImGui::End();
+		
+		ImGui::Begin("Renderer window");
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
+		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
 		// Uvs are for flipping the image
 		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height),
 		             ImVec2(0, 1), ImVec2(1, 0));
-
 		ImGui::End();
 
 		// Rendering
