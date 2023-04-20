@@ -25,7 +25,7 @@ void Application::Render() const
 	const auto viewport_width = aspect_ratio_ * viewport_height;
 	const auto focal_length = 1.0;
 
-	const auto origin = point3(0, 0, 0);
+	const auto origin = Point3(0, 0, 0);
 	const auto horizontal = Vec3(viewport_width, 0, 0);
 	const auto vertical = Vec3(0, viewport_height, 0);
 	const auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focal_length);
@@ -37,7 +37,7 @@ void Application::Render() const
 			auto u = static_cast<double>(i) / (width_ - 1);
 			auto v = static_cast<double>(j) / (height_ - 1);
 			Ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			color pixel_color = RayColor(r);
+			Color pixel_color = RayColor(r);
 
 			int ir = static_cast<int>(255.999 * pixel_color.x());
 			int ig = static_cast<int>(255.999 * pixel_color.y());
@@ -50,7 +50,7 @@ void Application::Render() const
 	}
 }
 
-double Application::HitSphere(const point3& center, const double radius, const Ray& r)
+double Application::HitSphere(const Point3& center, const double radius, const Ray& r)
 {
 	const Vec3 oc = r.Origin() - center;
 	const auto a = r.Direction().LengthSquared();
@@ -65,17 +65,17 @@ double Application::HitSphere(const point3& center, const double radius, const R
 	return (-half_b - sqrt(discriminant)) / a;
 }
 
-color Application::RayColor(const Ray& r)
+Color Application::RayColor(const Ray& r)
 {
-	auto t = HitSphere(point3(0, 0, -1), 0.5, r);
+	auto t = HitSphere(Point3(0, 0, -1), 0.5, r);
 	if (t > 0.0)
 	{
 		const Vec3 normal = UnitVector(r.At(t) - Vec3(0, 0, -1));
-		return 0.5 * color(normal.x() + 1, normal.y() + 1, normal.z() + 1);
+		return 0.5 * Color(normal.x() + 1, normal.y() + 1, normal.z() + 1);
 	}
 	const Vec3 unit_direction = UnitVector(r.Direction());
 	t = 0.5 * (unit_direction.y() + 1.0);
-	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
+	return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
 }
 
 unsigned char* Application::GetImage() const

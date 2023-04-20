@@ -17,8 +17,8 @@ public:
 	int GetImageHeight() const;
 
 private:
-	static color RayColor(const Ray& r);
-	static double HitSphere(const point3& center, double radius, const Ray& r);
+	static Color RayColor(const Ray& r);
+	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
 	int width_{};
 	int height_{};

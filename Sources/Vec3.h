@@ -58,12 +58,10 @@ public:
 	double e[3];
 };
 
-// Type aliases for Vec3
-using point3 = Vec3; // 3D point
-using color = Vec3; // RGB color
+using Point3 = Vec3; // 3D point
+using Color = Vec3; // RGB color
 
-// Vec3 Utility Functions
-
+// Utility Functions
 inline std::ostream& operator<<(std::ostream& out, const Vec3& v)
 {
 	return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
