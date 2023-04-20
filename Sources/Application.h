@@ -1,6 +1,8 @@
 #pragma once
-#include "Utility/Ray.h"
-#include "Utility/Vec3.h"
+#include "Hittable.h"
+#include "Utility/Common.h"
+#include "HittableList.h"
+#include "Sphere.h"
 
 class Application
 {
@@ -16,7 +18,7 @@ public:
 	int GetImageHeight() const;
 
 private:
-	static Color RayColor(const Ray& r);
+	static Color RayColor(const Ray& ray, const Hittable& world);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
 	int width_{};
