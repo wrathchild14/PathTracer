@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "AABB.h"
-#include "Material.h"
-#include "Utility/Ray.h"
+#include "../Utility/AABB.h"
+#include "../Materials/Material.h"
+#include "../Utility/Ray.h"
 
 struct HitRecord
 {

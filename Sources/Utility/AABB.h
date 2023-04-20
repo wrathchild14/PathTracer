@@ -1,6 +1,5 @@
 #pragma once
-
-#include "Utility/Ray.h"
+#include "Ray.h"
 
 class AABB
 {

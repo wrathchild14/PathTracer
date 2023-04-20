@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "Hittable.h"
-#include "Utility/Ray.h"
+#include "HittableList.h"
+
+class Material;
 
 class Sphere : public Hittable
 {

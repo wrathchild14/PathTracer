@@ -1,10 +1,9 @@
 #include "Application.h"
 
-#include "Camera.h"
-#include "DiffuseLight.h"
-#include "Lambertian.h"
-#include "Material.h"
-#include "Rectangle.h"
+#include "Materials/DiffuseLight.h"
+#include "Materials/Lambertian.h"
+#include "Primitives/Rectangle.h"
+#include "Utility/Camera.h"
 
 
 Application::Application(const int width, const double aspect_ratio): width_(width),

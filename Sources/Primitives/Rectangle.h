@@ -2,7 +2,8 @@
 #include <memory>
 
 #include "Hittable.h"
-#include "Material.h"
+#include "../Utility/Ray.h"
+#include "../Materials/Material.h"
 
 class XZRectangle : public Hittable
 {

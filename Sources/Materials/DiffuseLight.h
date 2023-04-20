@@ -1,6 +1,8 @@
 #pragma once
-#include "Hittable.h"
-#include "Material.h"
+#include "../Utility/Vec3.h"
+#include "../Materials/Material.h"
+
+class Ray;
 
 class DiffuseLight : public Material
 {

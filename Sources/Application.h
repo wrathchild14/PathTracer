@@ -1,8 +1,6 @@
 #pragma once
-#include "Hittable.h"
-#include "Utility/Common.h"
-#include "HittableList.h"
-#include "Sphere.h"
+#include "Primitives/HittableList.h"
+#include "Utility/Ray.h"
 
 class Application
 {
