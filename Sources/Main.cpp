@@ -86,10 +86,15 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	// Settings
 	const Application application(600, 1.0);
 	int fov = 40;
 	int samples_per_pixel = 5;
-	
+	const int width = application.GetImageWidth();
+	const int height = application.GetImageHeight();
+	int row_counter = height - 1;
+	bool image_is_rendering = false;
+
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
@@ -114,18 +119,33 @@ int main(int, char**)
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 100);
 		if (ImGui::Button("Render"))
 		{
-			application.Render(fov, samples_per_pixel);
-			const auto image = application.GetImage();
-			const auto width = application.GetImageWidth();
-			const auto height = application.GetImageHeight();
-			if (image != nullptr)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-							 GL_UNSIGNED_BYTE, image);
-			}
+			row_counter = height - 1;
+			image_is_rendering = true;
 		}
 		ImGui::End();
-		
+
+		if (image_is_rendering)
+		{
+			if (row_counter >= 0)
+			{
+				application.Render(row_counter, samples_per_pixel);
+				if (row_counter % 10 == 0)
+				{
+					const auto image = application.GetImage();
+					if (image != nullptr)
+					{
+						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+						             GL_UNSIGNED_BYTE, image);
+					}
+				}
+			}
+			else
+			{
+				image_is_rendering = false;
+			}
+			row_counter--;
+		}
+
 		ImGui::Begin("Render window");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const auto viewport_width = ImGui::GetContentRegionAvail().x;

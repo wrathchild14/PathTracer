@@ -1,15 +1,20 @@
 #pragma once
 #include "Primitives/HittableList.h"
+#include "Utility/Camera.h"
 #include "Utility/Ray.h"
+#include "Materials/DiffuseLight.h"
+#include "Primitives/Rectangle.h"
+
+#include "Materials/Lambertian.h"
+#include "Primitives/Sphere.h"
 
 class Application
 {
 public:
 	Application(int width, double aspect_ratio);
-	Application(int width, int height);
 	~Application();
 
-	void Render(int fov, int samples_per_pixel) const;
+	void Render(const int j, const int samples_per_pixel) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;
@@ -24,6 +29,9 @@ private:
 
 	int width_{};
 	int height_{};
+	HittableList world_;
+	Camera* camera_;
+	int max_depth_;
 
 	unsigned char* image_{};
 	double aspect_ratio_{};

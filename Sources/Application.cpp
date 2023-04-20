@@ -1,23 +1,14 @@
 #include "Application.h"
 
-#include "Materials/DiffuseLight.h"
-#include "Materials/Lambertian.h"
-#include "Primitives/Rectangle.h"
-#include "Primitives/Sphere.h"
-#include "Utility/Camera.h"
-
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
                                                                       aspect_ratio_(aspect_ratio)
 {
 	image_ = new unsigned char[height_ * width_ * 3];
-}
-
-Application::Application(const int width, const int height)
-	: width_(width), height_(height), aspect_ratio_(1.0)
-{
-	image_ = new unsigned char[height_ * width_ * 3];
+	world_ = GetCBExample();
+	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
+	max_depth_ = 20;
 }
 
 Application::~Application()
@@ -50,37 +41,30 @@ HittableList Application::GetCBExample() const
 	return objects;
 }
 
-void Application::Render(const int fov, const int samples_per_pixel) const
+void Application::Render(const int j, const int samples_per_pixel) const
 {
-	const Camera camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), fov, aspect_ratio_);
-	const HittableList world = GetCBExample();
-	const int max_depth = 20;
-
-	for (int j = height_ - 1; j >= 0; --j)
+	for (int i = 0; i < width_; ++i)
 	{
-		for (int i = 0; i < width_; ++i)
+		Color pixel_color(0, 0, 0);
+		for (int s = 0; s < samples_per_pixel; ++s)
 		{
-			Color pixel_color(0, 0, 0);
-			for (int s = 0; s < samples_per_pixel; ++s)
-			{
-				const auto u = (i + RandomDouble()) / (width_ - 1);
-				const auto v = (j + RandomDouble()) / (height_ - 1);
-				Ray r = camera.GetRay(u, v);
-				pixel_color += RayColor(r, background_, world, max_depth);
-			}
-
-			auto r = pixel_color.x();
-			auto g = pixel_color.y();
-			auto b = pixel_color.z();
-			const auto scale = 1.0 / samples_per_pixel;
-			r = sqrt(scale * r);
-			g = sqrt(scale * g);
-			b = sqrt(scale * b);
-
-			image_[(j * width_ + i) * 3] = static_cast<int>(256 * Clamp(r, 0.0, 0.999));
-			image_[(j * width_ + i) * 3 + 1] = static_cast<int>(256 * Clamp(g, 0.0, 0.999));
-			image_[(j * width_ + i) * 3 + 2] = static_cast<int>(256 * Clamp(b, 0.0, 0.999));
+			const auto u = (i + RandomDouble()) / (width_ - 1);
+			const auto v = (j + RandomDouble()) / (height_ - 1);
+			Ray r = camera_->GetRay(u, v);
+			pixel_color += RayColor(r, background_, world_, max_depth_);
 		}
+
+		auto r = pixel_color.x();
+		auto g = pixel_color.y();
+		auto b = pixel_color.z();
+		const auto scale = 1.0 / samples_per_pixel;
+		r = sqrt(scale * r);
+		g = sqrt(scale * g);
+		b = sqrt(scale * b);
+
+		image_[(j * width_ + i) * 3] = static_cast<int>(256 * Clamp(r, 0.0, 0.999));
+		image_[(j * width_ + i) * 3 + 1] = static_cast<int>(256 * Clamp(g, 0.0, 0.999));
+		image_[(j * width_ + i) * 3 + 2] = static_cast<int>(256 * Clamp(b, 0.0, 0.999));
 	}
 }
 
