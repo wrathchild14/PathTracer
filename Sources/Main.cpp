@@ -60,7 +60,7 @@ int main(int, char**)
 #endif
 
 	// Create window with graphics context
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1280, 720, "Path tracer", nullptr, nullptr);
 	if (window == nullptr)
 		return 1;
 	glfwMakeContextCurrent(window);
@@ -87,8 +87,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	const Application application(400, 16.0 / 9.0);
-	// Application application(400, 420);
+	const Application application(400, 4.0 / 3.0);
 
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -110,9 +109,9 @@ int main(int, char**)
 		ImGui::NewFrame();
 
 		/*if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);*/
+		    ImGui::ShowDemoWindow(&show_demo_window);*/
 
-		ImGui::Begin("Renderer (just an image for now)");
+		ImGui::Begin("Renderer window");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
 		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);

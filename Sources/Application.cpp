@@ -8,8 +8,8 @@ Application::Application(const int width, const double aspect_ratio): width_(wid
 	image_ = new unsigned char[height_ * width_ * 3];
 }
 
-Application::Application(const int width, int height)
-	: width_(width), height_(height), aspect_ratio_(0)
+Application::Application(const int width, const int height)
+	: width_(width), height_(height), aspect_ratio_(2)
 {
 	image_ = new unsigned char[height_ * width_ * 3];
 }
