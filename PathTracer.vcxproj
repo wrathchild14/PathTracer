@@ -145,9 +145,11 @@
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Sources\HittableList.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Rectangle.cpp" />
     <ClCompile Include="Sources\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sources\AABB.h" />
     <ClInclude Include="Sources\Application.h" />
     <ClInclude Include="External\ImGui\Backends\imgui_impl_glfw.h" />
     <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3.h" />
@@ -164,6 +166,7 @@
     <ClInclude Include="Sources\HittableList.h" />
     <ClInclude Include="Sources\Lambertian.h" />
     <ClInclude Include="Sources\Material.h" />
+    <ClInclude Include="Sources\Rectangle.h" />
     <ClInclude Include="Sources\Sphere.h" />
     <ClInclude Include="Sources\Utility\Common.h" />
     <ClInclude Include="Sources\Utility\Ray.h" />

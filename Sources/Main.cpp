@@ -86,9 +86,9 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	const Application application(400, 4.0 / 3.0);
-	int fov = 50;
-	int samples_per_pixel = 40;
+	const Application application(600, 1.0);
+	int fov = 40;
+	int samples_per_pixel = 30;
 	
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 

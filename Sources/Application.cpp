@@ -4,6 +4,7 @@
 #include "DiffuseLight.h"
 #include "Lambertian.h"
 #include "Material.h"
+#include "Rectangle.h"
 
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
@@ -24,24 +25,30 @@ Application::~Application()
 	free(image_);
 }
 
+HittableList Application::GetCornellBox() const
+{
+	HittableList objects;
+
+	auto red = std::make_shared<Lambertian>(Color(.65, .05, .05));
+	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
+	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
+	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
+
+	objects.Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
+	objects.Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
+	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
+	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
+	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
+	
+	objects.Add(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light));
+
+	return objects;
+}
+
 void Application::Render(const int fov, const int samples_per_pixel) const
 {
-	// Go in Init() please :)
-	HittableList world;
-
-	const Camera camera(Point3(0, 1, 2), Point3(0, 0, -1), Vec3(0, 1, 0), fov, 4.0 / 3.0);
-
-	auto material_ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
-	auto material_left = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
-	auto material_right = make_shared<Lambertian>(Color(0.8, 0.2, 0.5));
-
-	world.add(make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0, material_ground));
-	world.add(make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), 0.5, material_left));
-	world.add(make_shared<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
-
-	auto diffuse_light = make_shared<DiffuseLight>(Color(4, 4, 4));
-	world.add(make_shared<Sphere>(Point3(0.0, 1.2, 0.0), 0.3, diffuse_light));
-
+	const Camera camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), fov, 4.0 / 3.0);
+	const HittableList world = GetCornellBox();
 	const int max_depth = 20;
 
 	for (int j = height_ - 1; j >= 0; --j)
