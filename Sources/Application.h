@@ -1,7 +1,6 @@
 #pragma once
-#include <memory>
-#include "Vec3.h"
-#include "Ray.h"
+#include "Utility/Ray.h"
+#include "Utility/Vec3.h"
 
 class Application
 {
