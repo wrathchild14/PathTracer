@@ -162,6 +162,8 @@
     <ClInclude Include="Sources\Camera.h" />
     <ClInclude Include="Sources\Hittable.h" />
     <ClInclude Include="Sources\HittableList.h" />
+    <ClInclude Include="Sources\Lambertian.h" />
+    <ClInclude Include="Sources\Material.h" />
     <ClInclude Include="Sources\Sphere.h" />
     <ClInclude Include="Sources\Utility\Common.h" />
     <ClInclude Include="Sources\Utility\Ray.h" />

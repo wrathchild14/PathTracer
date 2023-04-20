@@ -21,7 +21,7 @@ public:
 	double y() const { return e[1]; }
 	double z() const { return e[2]; }
 
-	Vec3 operator-() const { return Vec3(-e[0], -e[1], -e[2]); }
+	Vec3 operator-() const { return {-e[0], -e[1], -e[2]}; }
 	double operator[](int i) const { return e[i]; }
 	double& operator[](int i) { return e[i]; }
 
@@ -54,6 +54,13 @@ public:
 	double LengthSquared() const
 	{
 		return e[0] * e[0] + e[1] * e[1] + e[2] * e[2];
+	}
+
+	bool NearZero() const
+	{
+		// Return true if the vector is close to zero in all dimensions.
+		const auto s = 1e-8;
+		return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
 	}
 
 public:
@@ -147,4 +154,9 @@ inline Vec3 RandomInHemisphere(const Vec3& normal)
 		return in_unit_sphere;
 	else
 		return -in_unit_sphere;
+}
+
+inline Vec3 RandomUnitVector()
+{
+	return UnitVector(RandomInUnitSphere());
 }

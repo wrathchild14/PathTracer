@@ -1,6 +1,8 @@
 #include "Application.h"
 
 #include "Camera.h"
+#include "Lambertian.h"
+#include "Material.h"
 
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
@@ -25,13 +27,18 @@ void Application::Render() const
 {
 	// Go in Init() please :)
 	HittableList world;
-	world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5));
-	world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
+	auto R = cos(pi / 4);
+
+	auto material_left = make_shared<Lambertian>(Color(0, 0, 1));
+	auto material_right = make_shared<Lambertian>(Color(1, 0, 0));
+
+	world.add(make_shared<Sphere>(Point3(-R, 0, -1), R, material_left));
+	world.add(make_shared<Sphere>(Point3(R, 0, -1), R, material_right));
 
 	const int samples_per_pixel = 40;
 	const int max_depth = 20;
 
-	Camera camera;
+	const Camera camera(120, aspect_ratio_);
 
 	for (int j = height_ - 1; j >= 0; --j)
 	{
@@ -83,8 +90,11 @@ Color Application::RayColor(const Ray& ray, const Hittable& world, const int dep
 	HitRecord rec;
 	if (world.Hit(ray, 0.001, infinity, rec))
 	{
-		const Point3 target = rec.point + RandomInHemisphere(rec.normal);
-		return 0.5 * RayColor(Ray(rec.point, target - rec.point), world, depth - 1);
+		Ray scattered;
+		Color attenuation;
+		if (rec.material->Scatter(ray, rec, attenuation, scattered))
+			return attenuation * RayColor(scattered, world, depth - 1);
+		return {0, 0, 0};
 	}
 	const Vec3 unit_direction = UnitVector(ray.Direction());
 	const auto t = 0.5 * (unit_direction.y() + 1.0);
