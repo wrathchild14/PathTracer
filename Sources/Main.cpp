@@ -126,7 +126,7 @@ int main(int, char**)
 		}
 		ImGui::End();
 		
-		ImGui::Begin("Renderer window");
+		ImGui::Begin("Render window");
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
 		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);

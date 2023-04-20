@@ -1,6 +1,7 @@
 #include "Application.h"
 
 #include "Camera.h"
+#include "DiffuseLight.h"
 #include "Lambertian.h"
 #include "Material.h"
 
@@ -28,7 +29,7 @@ void Application::Render(const int fov, const int samples_per_pixel) const
 	// Go in Init() please :)
 	HittableList world;
 
-	const Camera camera(Point3(-2, 2, 1), Point3(0, 0, -1), Vec3(0, 1, 0), fov, 4.0 / 3.0);
+	const Camera camera(Point3(0, 1, 2), Point3(0, 0, -1), Vec3(0, 1, 0), fov, 4.0 / 3.0);
 
 	auto material_ground = make_shared<Lambertian>(Color(0.8, 0.8, 0.0));
 	auto material_left = make_shared<Lambertian>(Color(0.1, 0.2, 0.5));
@@ -37,6 +38,10 @@ void Application::Render(const int fov, const int samples_per_pixel) const
 	world.add(make_shared<Sphere>(Point3(0.0, -100.5, -1.0), 100.0, material_ground));
 	world.add(make_shared<Sphere>(Point3(-1.0, 0.0, -1.0), 0.5, material_left));
 	world.add(make_shared<Sphere>(Point3(1.0, 0.0, -1.0), 0.5, material_right));
+
+	auto diffuse_light = make_shared<DiffuseLight>(Color(4, 4, 4));
+	world.add(make_shared<Sphere>(Point3(0.0, 1.2, 0.0), 0.3, diffuse_light));
+
 	const int max_depth = 20;
 
 	for (int j = height_ - 1; j >= 0; --j)
@@ -49,7 +54,7 @@ void Application::Render(const int fov, const int samples_per_pixel) const
 				const auto u = (i + RandomDouble()) / (width_ - 1);
 				const auto v = (j + RandomDouble()) / (height_ - 1);
 				Ray r = camera.GetRay(u, v);
-				pixel_color += RayColor(r, world, max_depth);
+				pixel_color += RayColor(r, background_, world, max_depth);
 			}
 
 			auto r = pixel_color.x();
@@ -82,22 +87,23 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 	return (-half_b - sqrt(discriminant)) / a;
 }
 
-Color Application::RayColor(const Ray& ray, const Hittable& world, const int depth)
+Color Application::RayColor(const Ray& ray, const Color& background, const Hittable& world, const int depth)
 {
 	if (depth <= 0)
 		return {0, 0, 0};
 	HitRecord rec;
-	if (world.Hit(ray, 0.001, infinity, rec))
-	{
-		Ray scattered;
-		Color attenuation;
-		if (rec.material->Scatter(ray, rec, attenuation, scattered))
-			return attenuation * RayColor(scattered, world, depth - 1);
-		return {0, 0, 0};
-	}
-	const Vec3 unit_direction = UnitVector(ray.Direction());
-	const auto t = 0.5 * (unit_direction.y() + 1.0);
-	return (1.0 - t) * Color(1.0, 1.0, 1.0) + t * Color(0.5, 0.7, 1.0);
+
+	if (!world.Hit(ray, 0.001, infinity, rec))
+		return background;
+
+	Ray scattered;
+	Color attenuation;
+	const Color emmited = rec.material->Emitted(rec.point);
+
+	if (!rec.material->Scatter(ray, rec, attenuation, scattered))
+		return emmited;
+
+	return emmited + attenuation * RayColor(scattered, background, world, depth - 1);
 }
 
 unsigned char* Application::GetImage() const

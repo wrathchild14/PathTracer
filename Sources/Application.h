@@ -18,7 +18,7 @@ public:
 	int GetImageHeight() const;
 
 private:
-	static Color RayColor(const Ray& ray, const Hittable& world, int depth);
+	static Color RayColor(const Ray& ray, const Color& background, const Hittable& world, const int depth);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
 	int width_{};
@@ -26,4 +26,5 @@ private:
 
 	unsigned char* image_{};
 	double aspect_ratio_{};
+	Color background_ = Color(0, 0, 0);
 };
