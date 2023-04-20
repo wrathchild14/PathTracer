@@ -39,13 +39,9 @@ void Application::Render() const
 			Ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
 			Color pixel_color = RayColor(r);
 
-			int ir = static_cast<int>(255.999 * pixel_color.x());
-			int ig = static_cast<int>(255.999 * pixel_color.y());
-			int ib = static_cast<int>(255.999 * pixel_color.z());
-
-			image_[(j * width_ + i) * 3] = ir;
-			image_[(j * width_ + i) * 3 + 1] = ig;
-			image_[(j * width_ + i) * 3 + 2] = ib;
+			image_[(j * width_ + i) * 3] = static_cast<int>(255.999 * pixel_color.x());
+			image_[(j * width_ + i) * 3 + 1] = static_cast<int>(255.999 * pixel_color.y());
+			image_[(j * width_ + i) * 3 + 2] = static_cast<int>(255.999 * pixel_color.z());
 		}
 	}
 }
