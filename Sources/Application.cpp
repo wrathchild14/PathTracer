@@ -28,7 +28,8 @@ void Application::Render() const
 	world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5));
 	world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
 
-	const int samples_per_pixel = 100;
+	const int samples_per_pixel = 40;
+	const int max_depth = 20;
 
 	Camera camera;
 
@@ -42,16 +43,16 @@ void Application::Render() const
 				const auto u = (i + RandomDouble()) / (width_ - 1);
 				const auto v = (j + RandomDouble()) / (height_ - 1);
 				Ray r = camera.GetRay(u, v);
-				pixel_color += RayColor(r, world);
+				pixel_color += RayColor(r, world, max_depth);
 			}
 
 			auto r = pixel_color.x();
 			auto g = pixel_color.y();
 			auto b = pixel_color.z();
 			const auto scale = 1.0 / samples_per_pixel;
-			r *= scale;
-			g *= scale;
-			b *= scale;
+			r = sqrt(scale * r);
+			g = sqrt(scale * g);
+			b = sqrt(scale * b);
 
 			image_[(j * width_ + i) * 3] = static_cast<int>(256 * Clamp(r, 0.0, 0.999));
 			image_[(j * width_ + i) * 3 + 1] = static_cast<int>(256 * Clamp(g, 0.0, 0.999));
@@ -75,12 +76,15 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 	return (-half_b - sqrt(discriminant)) / a;
 }
 
-Color Application::RayColor(const Ray& ray, const Hittable& world)
+Color Application::RayColor(const Ray& ray, const Hittable& world, const int depth)
 {
+	if (depth <= 0)
+		return {0, 0, 0};
 	HitRecord rec;
-	if (world.Hit(ray, 0, infinity, rec))
+	if (world.Hit(ray, 0.001, infinity, rec))
 	{
-		return 0.5 * (rec.normal + Color(1, 1, 1));
+		const Point3 target = rec.point + RandomInHemisphere(rec.normal);
+		return 0.5 * RayColor(Ray(rec.point, target - rec.point), world, depth - 1);
 	}
 	const Vec3 unit_direction = UnitVector(ray.Direction());
 	const auto t = 0.5 * (unit_direction.y() + 1.0);
