@@ -143,7 +143,9 @@
     <ClCompile Include="External\ImGui\imgui_draw.cpp" />
     <ClCompile Include="External\ImGui\imgui_tables.cpp" />
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="Sources\HittableList.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Application.h" />
@@ -157,8 +159,12 @@
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
     <ClInclude Include="External\stb_image.h" />
-    <ClInclude Include="Sources\Ray.h" />
-    <ClInclude Include="Sources\Vec3.h" />
+    <ClInclude Include="Sources\Hittable.h" />
+    <ClInclude Include="Sources\HittableList.h" />
+    <ClInclude Include="Sources\Sphere.h" />
+    <ClInclude Include="Sources\Utility\Common.h" />
+    <ClInclude Include="Sources\Utility\Ray.h" />
+    <ClInclude Include="Sources\Utility\Vec3.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="lena.png" />
