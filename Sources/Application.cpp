@@ -3,6 +3,7 @@
 #include "Materials/DiffuseLight.h"
 #include "Materials/Lambertian.h"
 #include "Primitives/Rectangle.h"
+#include "Primitives/Sphere.h"
 #include "Utility/Camera.h"
 
 
@@ -14,7 +15,7 @@ Application::Application(const int width, const double aspect_ratio): width_(wid
 }
 
 Application::Application(const int width, const int height)
-	: width_(width), height_(height), aspect_ratio_(2)
+	: width_(width), height_(height), aspect_ratio_(1.0)
 {
 	image_ = new unsigned char[height_ * width_ * 3];
 }
@@ -24,7 +25,7 @@ Application::~Application()
 	free(image_);
 }
 
-HittableList Application::GetCornellBox() const
+HittableList Application::GetCBExample() const
 {
 	HittableList objects;
 
@@ -32,13 +33,18 @@ HittableList Application::GetCornellBox() const
 	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
 	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
 	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
+	auto pink = std::make_shared<Lambertian>(Color(0.96, 0.06, 0.84));
+	auto weird_green = std::make_shared<Lambertian>(Color(0.29, 0.95, 0.67));
 
+	objects.Add(std::make_shared<Sphere>(Point3(150, 80, 300), 100, pink));
+	objects.Add(std::make_shared<Sphere>(Point3(330, 50, 100), 50, weird_green));
+
+	// Cornell Box
 	objects.Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
 	objects.Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
 	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
-
 	objects.Add(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light));
 
 	return objects;
@@ -46,8 +52,8 @@ HittableList Application::GetCornellBox() const
 
 void Application::Render(const int fov, const int samples_per_pixel) const
 {
-	const Camera camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), fov, 4.0 / 3.0);
-	const HittableList world = GetCornellBox();
+	const Camera camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), fov, aspect_ratio_);
+	const HittableList world = GetCBExample();
 	const int max_depth = 20;
 
 	for (int j = height_ - 1; j >= 0; --j)

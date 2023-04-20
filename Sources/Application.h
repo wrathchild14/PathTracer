@@ -19,7 +19,8 @@ private:
 	static Color RayColor(const Ray& ray, const Color& background, const Hittable& world, const int depth);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
-	HittableList GetCornellBox() const;
+	// Cornell Box example with 2 spheres
+	HittableList GetCBExample() const;
 
 	int width_{};
 	int height_{};

@@ -88,7 +88,7 @@ int main(int, char**)
 
 	const Application application(600, 1.0);
 	int fov = 40;
-	int samples_per_pixel = 30;
+	int samples_per_pixel = 5;
 	
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
