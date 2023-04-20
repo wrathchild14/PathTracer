@@ -3,14 +3,14 @@
 
 bool Sphere::Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const
 {
-	Vec3 oc = ray.Origin() - center_;
-	auto a = ray.Direction().LengthSquared();
-	auto half_b = Dot(oc, ray.Direction());
-	auto c = oc.LengthSquared() - radius_ * radius_;
+	const Vec3 oc = ray.Origin() - center_;
+	const auto a = ray.Direction().LengthSquared();
+	const auto half_b = Dot(oc, ray.Direction());
+	const auto c = oc.LengthSquared() - radius_ * radius_;
 
-	auto discriminant = half_b * half_b - a * c;
+	const auto discriminant = half_b * half_b - a * c;
 	if (discriminant < 0) return false;
-	auto sqrtd = sqrt(discriminant);
+	const auto sqrtd = sqrt(discriminant);
 
 	// Find the nearest root that lies in the acceptable range.
 	auto root = (-half_b - sqrtd) / a;

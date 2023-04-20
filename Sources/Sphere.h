@@ -7,7 +7,7 @@ class Sphere : public Hittable
 public:
 	Sphere() = default;
 
-	Sphere(const Point3 center, const double r) : center_(center), radius_(r)
+	Sphere(const Point3& center, const double r) : center_(center), radius_(r)
 	{
 	}
 
