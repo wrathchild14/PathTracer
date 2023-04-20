@@ -50,22 +50,31 @@ void Application::Render() const
 	}
 }
 
-bool Application::HitSphere(const point3& center, const double radius, const Ray& r)
+double Application::HitSphere(const point3& center, const double radius, const Ray& r)
 {
 	const Vec3 oc = r.Origin() - center;
-	const auto a = Dot(r.Direction(), r.Direction());
-	const auto b = 2.0 * Dot(oc, r.Direction());
-	const auto c = Dot(oc, oc) - radius * radius;
-	const auto discriminant = b * b - 4 * a * c;
-	return discriminant > 0;
+	const auto a = r.Direction().LengthSquared();
+	const auto half_b = Dot(oc, r.Direction());
+	const auto c = oc.LengthSquared() - radius * radius;
+	const auto discriminant = half_b * half_b - a * c;
+
+	if (discriminant < 0)
+	{
+		return -1.0;
+	}
+	return (-half_b - sqrt(discriminant)) / a;
 }
 
 color Application::RayColor(const Ray& r)
 {
-	if (HitSphere(point3(0, 0, -1), 0.6, r))
-		return {1, 0, 0};
+	auto t = HitSphere(point3(0, 0, -1), 0.5, r);
+	if (t > 0.0)
+	{
+		const Vec3 normal = UnitVector(r.At(t) - Vec3(0, 0, -1));
+		return 0.5 * color(normal.x() + 1, normal.y() + 1, normal.z() + 1);
+	}
 	const Vec3 unit_direction = UnitVector(r.Direction());
-	const auto t = 0.5 * (unit_direction.y() + 1.0);
+	t = 0.5 * (unit_direction.y() + 1.0);
 	return (1.0 - t) * color(1.0, 1.0, 1.0) + t * color(0.5, 0.7, 1.0);
 }
 
