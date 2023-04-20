@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 
+#include "Common.h"
+
 using std::sqrt;
 
 class Vec3
@@ -116,4 +118,33 @@ inline Vec3 Cross(const Vec3& u, const Vec3& v)
 inline Vec3 UnitVector(Vec3 v)
 {
 	return v / v.Length();
+}
+
+inline static Vec3 Random()
+{
+	return {RandomDouble(), RandomDouble(), RandomDouble()};
+}
+
+inline static Vec3 Random(const double min, const double max)
+{
+	return {RandomDouble(min, max), RandomDouble(min, max), RandomDouble(min, max)};
+}
+
+inline Vec3 RandomInUnitSphere()
+{
+	while (true)
+	{
+		auto p = Random(-1, 1);
+		if (p.LengthSquared() >= 1) continue;
+		return p;
+	}
+}
+
+inline Vec3 RandomInHemisphere(const Vec3& normal)
+{
+	const Vec3 in_unit_sphere = RandomInUnitSphere();
+	if (Dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+		return in_unit_sphere;
+	else
+		return -in_unit_sphere;
 }
