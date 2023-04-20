@@ -159,6 +159,7 @@
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
     <ClInclude Include="External\stb_image.h" />
+    <ClInclude Include="Sources\Camera.h" />
     <ClInclude Include="Sources\Hittable.h" />
     <ClInclude Include="Sources\HittableList.h" />
     <ClInclude Include="Sources\Sphere.h" />

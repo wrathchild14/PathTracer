@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "Camera.h"
+
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
@@ -26,27 +28,34 @@ void Application::Render() const
 	world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5));
 	world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
 
-	const auto viewport_height = 2.0;
-	const auto viewport_width = aspect_ratio_ * viewport_height;
-	const auto focal_length = 1.0;
+	const int samples_per_pixel = 100;
 
-	const auto origin = Point3(0, 0, 0);
-	const auto horizontal = Vec3(viewport_width, 0, 0);
-	const auto vertical = Vec3(0, viewport_height, 0);
-	const auto lower_left_corner = origin - horizontal / 2 - vertical / 2 - Vec3(0, 0, focal_length);
+	Camera camera;
 
 	for (int j = height_ - 1; j >= 0; --j)
 	{
 		for (int i = 0; i < width_; ++i)
 		{
-			auto u = static_cast<double>(i) / (width_ - 1);
-			auto v = static_cast<double>(j) / (height_ - 1);
-			Ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			Color pixel_color = RayColor(r, world);
+			Color pixel_color(0, 0, 0);
+			for (int s = 0; s < samples_per_pixel; ++s)
+			{
+				const auto u = (i + RandomDouble()) / (width_ - 1);
+				const auto v = (j + RandomDouble()) / (height_ - 1);
+				Ray r = camera.GetRay(u, v);
+				pixel_color += RayColor(r, world);
+			}
 
-			image_[(j * width_ + i) * 3] = static_cast<int>(255.999 * pixel_color.x());
-			image_[(j * width_ + i) * 3 + 1] = static_cast<int>(255.999 * pixel_color.y());
-			image_[(j * width_ + i) * 3 + 2] = static_cast<int>(255.999 * pixel_color.z());
+			auto r = pixel_color.x();
+			auto g = pixel_color.y();
+			auto b = pixel_color.z();
+			const auto scale = 1.0 / samples_per_pixel;
+			r *= scale;
+			g *= scale;
+			b *= scale;
+
+			image_[(j * width_ + i) * 3] = static_cast<int>(256 * Clamp(r, 0.0, 0.999));
+			image_[(j * width_ + i) * 3 + 1] = static_cast<int>(256 * Clamp(g, 0.0, 0.999));
+			image_[(j * width_ + i) * 3 + 2] = static_cast<int>(256 * Clamp(b, 0.0, 0.999));
 		}
 	}
 }
