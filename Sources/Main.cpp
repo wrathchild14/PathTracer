@@ -59,7 +59,7 @@ int main(int, char**)
 #endif
 
 	// Create window with graphics context
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Path tracer", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(1400, 720, "Path tracer", nullptr, nullptr);
 	if (window == nullptr)
 		return 1;
 	glfwMakeContextCurrent(window);
@@ -114,9 +114,6 @@ int main(int, char**)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const int viewport_width = static_cast<int>(ImGui::GetContentRegionAvail().x);
 		const int viewport_height = static_cast<int>(ImGui::GetContentRegionAvail().y);
-		// Uvs are for flipping the image
-		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height),
-		             ImVec2(0, 1), ImVec2(1, 0));
 
 		if (ImGui::Button("Render"))
 		{
@@ -130,6 +127,11 @@ int main(int, char**)
 				             GL_UNSIGNED_BYTE, image);
 			}
 		}
+
+		// Uvs are for flipping the image
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height),
+		             ImVec2(0, 1), ImVec2(1, 0));
+
 		ImGui::End();
 
 		// Rendering
