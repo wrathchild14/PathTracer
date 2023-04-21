@@ -116,7 +116,7 @@ int main(int, char**)
 
 		ImGui::Begin("Properties");
 		ImGui::SliderInt("FOV", &fov, 10, 120);
-		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 100);
+		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 250);
 		if (ImGui::Button("Render"))
 		{
 			row_counter = height - 1;
