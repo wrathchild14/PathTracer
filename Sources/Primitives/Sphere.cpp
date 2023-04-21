@@ -1,8 +1,5 @@
 ﻿#include "Sphere.h"
 
-#include "../Materials/Pdfs.h"
-
-
 bool Sphere::Hit(const Ray& ray, const double t_min, const double t_max, HitRecord& rec) const
 {
 	const Vec3 oc = ray.Origin() - center_;
