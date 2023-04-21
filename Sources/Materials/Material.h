@@ -1,14 +1,27 @@
 #pragma once
-#include "../Primitives/Hittable.h"
+#include "Pdf.h"
 
 struct HitRecord;
+
+struct ScatterRecord
+{
+	Ray specular_ray;
+	bool is_specular;
+	Color attenuation;
+	std::shared_ptr<Pdf> pdf;
+};
 
 class Material
 {
 public:
 	virtual ~Material() = default;
 
-	virtual bool Scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const
+	virtual Color Emitted(const Ray& r_in, const HitRecord& rec, const Point3& p) const
+	{
+		return {0, 0, 0};
+	}
+
+	virtual bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec) const
 	{
 		return false;
 	}
@@ -18,16 +31,5 @@ public:
 	) const
 	{
 		return 0;
-	}
-
-	virtual Color Emitted(const Point3& p) const
-	{
-		return {0, 0, 0};
-	}
-
-	virtual Color Emitted(const Ray& r_in, const HitRecord& rec, double u, double v,
-	                      const Point3& p) const
-	{
-		return {0, 0, 0};
 	}
 };
