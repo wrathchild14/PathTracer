@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "FlipFace.h"
+
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
@@ -36,7 +38,7 @@ HittableList Application::GetCBExample() const
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
 	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
-	objects.Add(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light));
+	objects.Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light)));
 
 	return objects;
 }
@@ -96,10 +98,31 @@ Color Application::RayColor(const Ray& ray, const Color& background, const Hitta
 	Color attenuation;
 	const Color emmited = rec.material->Emitted(rec.point);
 
-	if (!rec.material->Scatter(ray, rec, attenuation, scattered))
+	double pdf;
+	Color albedo;
+
+	if (!rec.material->Scatter(ray, rec, albedo, scattered, pdf))
 		return emmited;
 
-	return emmited + attenuation * RayColor(scattered, background, world, depth - 1);
+	auto on_light = Point3(RandomDouble(213, 343), 554, RandomDouble(227, 332));
+	auto to_light = on_light - rec.point;
+	auto distance_squared = to_light.LengthSquared();
+	to_light = UnitVector(to_light);
+
+	if (Dot(to_light, rec.normal) < 0)
+		return emmited;
+
+	double light_area = (343 - 213) * (332 - 227);
+	auto light_cosine = fabs(to_light.y());
+	if (light_cosine < 0.000001)
+		return emmited;
+
+	pdf = distance_squared / (light_cosine * light_area);
+	scattered = Ray(rec.point, to_light);
+
+	return emmited
+		+ albedo * rec.material->ScatteringPdf(ray, rec, scattered)
+		* RayColor(scattered, background, world, depth - 1) / pdf;
 }
 
 unsigned char* Application::GetImage() const

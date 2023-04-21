@@ -395,6 +395,9 @@
   <ItemGroup>
     <Image Include="lena.png" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\FlipFace.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
