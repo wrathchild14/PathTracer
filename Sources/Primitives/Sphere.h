@@ -20,6 +20,8 @@ public:
 	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
 
 private:
+	Vec3 RandomToSphere(double radius, double distance_squared) const;
+
 	Point3 center_;
 	double radius_{};
 	std::shared_ptr<Material> material_;
