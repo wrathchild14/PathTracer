@@ -393,9 +393,6 @@
     <ClInclude Include="Sources\Utility\Vec3.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="lena.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Sources\FlipFace.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
