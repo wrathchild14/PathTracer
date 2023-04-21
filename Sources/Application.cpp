@@ -41,7 +41,7 @@ HittableList Application::GetCBExample() const
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
 	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
-	
+
 	objects.Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light)));
 
 	return objects;
@@ -100,13 +100,13 @@ Color Application::RayColor(const Ray& ray, const Color& background, const Hitta
 		return background;
 
 	Ray scattered;
-	const Color emmited = rec.material->Emitted(rec.point);
+	const Color emitted = rec.material->Emitted(rec.point);
 
 	double pdf;
 	Color albedo;
 
 	if (!rec.material->Scatter(ray, rec, albedo, scattered, pdf))
-		return emmited;
+		return emitted;
 
 	const auto p0 = std::make_shared<HittablePdf>(lights, rec.point);
 	const auto p1 = std::make_shared<CosinePdf>(rec.normal);
@@ -115,7 +115,7 @@ Color Application::RayColor(const Ray& ray, const Color& background, const Hitta
 	scattered = Ray(rec.point, mixed_pdf.Generate());
 	pdf = mixed_pdf.Value(scattered.Direction());
 
-	return emmited
+	return emitted
 		+ albedo * rec.material->ScatteringPdf(ray, rec, scattered)
 		* RayColor(scattered, background, world, lights, depth - 1) / pdf;
 }

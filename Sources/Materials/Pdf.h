@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <utility>
+
 #include "../Utility/OrthonomalBasis.h"
 #include "../Utility/Vec3.h"
 
@@ -32,7 +34,7 @@ public:
 	double Value(const Vec3& direction) const override
 	{
 		const auto cosine = Dot(UnitVector(direction), uvw_.w());
-		return (cosine <= 0) ? 0 : cosine / pi;
+		return cosine <= 0 ? 0 : cosine / pi;
 	}
 
 	Vec3 Generate() const override
@@ -66,24 +68,27 @@ private:
 	std::shared_ptr<Hittable> ptr_;
 };
 
-class MixturePdf : public Pdf {
+class MixturePdf : public Pdf
+{
 public:
-	MixturePdf(std::shared_ptr<Pdf> p0, std::shared_ptr<Pdf> p1) {
-		p_[0] = p0;
-		p_[1] = p1;
+	MixturePdf(std::shared_ptr<Pdf> pdf0, std::shared_ptr<Pdf> pdf1)
+	{
+		pdfs_[0] = std::move(pdf0);
+		pdfs_[1] = std::move(pdf1);
 	}
 
-	virtual double Value(const Vec3& direction) const override {
-		return 0.5 * p_[0]->Value(direction) + 0.5 *p_[1]->Value(direction);
+	double Value(const Vec3& direction) const override
+	{
+		return 0.5 * pdfs_[0]->Value(direction) + 0.5 * pdfs_[1]->Value(direction);
 	}
 
-	virtual Vec3 Generate() const override {
+	Vec3 Generate() const override
+	{
 		if (RandomDouble() < 0.5)
-			return p_[0]->Generate();
-		else
-			return p_[1]->Generate();
+			return pdfs_[0]->Generate();
+		return pdfs_[1]->Generate();
 	}
 
 private:
-	std::shared_ptr<Pdf> p_[2];
+	std::shared_ptr<Pdf> pdfs_[2];
 };
