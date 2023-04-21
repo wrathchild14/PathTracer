@@ -1,19 +1,18 @@
 #include "Application.h"
 
 #include "Primitives/FlipFace.h"
-#include "Materials/Pdf.h"
-
-std::shared_ptr<Hittable> lights =
-	std::make_shared<XZRectangle>(213, 343, 227, 332, 554, std::shared_ptr<Material>());
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
                                                                       aspect_ratio_(aspect_ratio)
 {
 	image_ = new unsigned char[height_ * width_ * 3];
-	world_ = GetCBExample();
 	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
 	max_depth_ = 20;
+
+	world_ = std::make_shared<HittableList>();
+	lights_ = std::make_shared<HittableList>();
+	AddCBExampleToWorld();
 }
 
 Application::~Application()
@@ -21,10 +20,8 @@ Application::~Application()
 	free(image_);
 }
 
-HittableList Application::GetCBExample() const
+void Application::AddCBExampleToWorld() const
 {
-	HittableList objects;
-
 	auto red = std::make_shared<Lambertian>(Color(.65, .05, .05));
 	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
 	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
@@ -32,19 +29,23 @@ HittableList Application::GetCBExample() const
 	auto pink = std::make_shared<Lambertian>(Color(0.96, 0.06, 0.84));
 	auto weird_green = std::make_shared<Lambertian>(Color(0.29, 0.95, 0.67));
 
-	objects.Add(std::make_shared<Sphere>(Point3(150, 80, 300), 100, pink));
-	objects.Add(std::make_shared<Sphere>(Point3(330, 50, 100), 50, weird_green));
+	world_->Add(std::make_shared<Sphere>(Point3(150, 80, 300), 100, pink));
+	world_->Add(std::make_shared<Sphere>(Point3(330, 50, 100), 50, weird_green));
 
 	// Cornell Box
-	objects.Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
-	objects.Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
-	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
-	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
-	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
+	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
+	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
+	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
+	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
+	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
 
-	objects.Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light)));
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
+	// world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 300, 300), 20, light)));
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<YZRectangle>(250, 300, 260, 320, 554, light)));
 
-	return objects;
+	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
+	// lights_->Add(std::make_shared<Sphere>(Point3(150, 300, 300), 20));
+	lights_->Add(std::make_shared<YZRectangle>(250, 300, 260, 320, 554));
 }
 
 void Application::Render(const int j, const int samples_per_pixel) const
@@ -57,7 +58,7 @@ void Application::Render(const int j, const int samples_per_pixel) const
 			const auto u = (i + RandomDouble()) / (width_ - 1);
 			const auto v = (j + RandomDouble()) / (height_ - 1);
 			Ray r = camera_->GetRay(u, v);
-			pixel_color += RayColor(r, background_, world_, lights, max_depth_);
+			pixel_color += RayColor(r, background_, world_, lights_, max_depth_);
 		}
 
 		auto r = pixel_color.x();
@@ -89,34 +90,29 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 	return (-half_b - sqrt(discriminant)) / a;
 }
 
-Color Application::RayColor(const Ray& ray, const Color& background, const Hittable& world,
-                            std::shared_ptr<Hittable>& lights, const int depth)
+Color Application::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
+                            const std::shared_ptr<Hittable>& lights, const int depth)
 {
 	if (depth <= 0)
 		return {0, 0, 0};
 	HitRecord rec;
 
-	if (!world.Hit(ray, 0.001, infinity, rec))
+	if (!world->Hit(ray, 0.001, infinity, rec))
 		return background;
 
-	Ray scattered;
-	const Color emitted = rec.material->Emitted(rec.point);
-
-	double pdf;
-	Color albedo;
-
-	if (!rec.material->Scatter(ray, rec, albedo, scattered, pdf))
+	ScatterRecord s_rec;
+	const Color emitted = rec.material->Emitted(ray, rec, rec.point);
+	if (!rec.material->Scatter(ray, rec, s_rec))
 		return emitted;
 
-	const auto p0 = std::make_shared<HittablePdf>(lights, rec.point);
-	const auto p1 = std::make_shared<CosinePdf>(rec.normal);
-	const MixturePdf mixed_pdf(p0, p1);
+	const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
+	const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
 
-	scattered = Ray(rec.point, mixed_pdf.Generate());
-	pdf = mixed_pdf.Value(scattered.Direction());
+	const auto scattered = Ray(rec.point, mixture_pdf.Generate());
+	const auto pdf = mixture_pdf.Value(scattered.Direction());
 
 	return emitted
-		+ albedo * rec.material->ScatteringPdf(ray, rec, scattered)
+		+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
 		* RayColor(scattered, background, world, lights, depth - 1) / pdf;
 }
 

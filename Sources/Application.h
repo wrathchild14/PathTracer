@@ -21,15 +21,17 @@ public:
 	int GetImageHeight() const;
 
 private:
-	static Color RayColor(const Ray& ray, const Color& background, const Hittable& world, std::shared_ptr<Hittable>& lights, const int depth);
+	static Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
+	                      const std::shared_ptr<Hittable>& lights, int depth);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
-	// Cornell Box example with 2 spheres
-	HittableList GetCBExample() const;
+	// Cornell Box example with 2 spheres (and 2 lights?)
+	void AddCBExampleToWorld() const;
 
 	int width_{};
 	int height_{};
-	HittableList world_;
+	std::shared_ptr<HittableList> lights_;
+	std::shared_ptr<HittableList> world_;
 	Camera* camera_;
 	int max_depth_;
 
