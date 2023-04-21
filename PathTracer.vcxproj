@@ -382,6 +382,8 @@
     <ClInclude Include="Sources\Materials\DiffuseLight.h" />
     <ClInclude Include="Sources\Materials\Lambertian.h" />
     <ClInclude Include="Sources\Materials\Material.h" />
+    <ClInclude Include="Sources\OrthonomalBasis.h" />
+    <ClInclude Include="Sources\Pdf.h" />
     <ClInclude Include="Sources\Primitives\Hittable.h" />
     <ClInclude Include="Sources\Primitives\HittableList.h" />
     <ClInclude Include="Sources\Primitives\Rectangle.h" />

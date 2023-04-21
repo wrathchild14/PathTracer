@@ -1,8 +1,10 @@
 #include "Application.h"
 
 #include "FlipFace.h"
+#include "Pdf.h"
 
-
+std::shared_ptr<Hittable> lights =
+		std::make_shared<XZRectangle>(213, 343, 227, 332, 554, std::shared_ptr<Material>());
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
                                                                       aspect_ratio_(aspect_ratio)
@@ -53,7 +55,7 @@ void Application::Render(const int j, const int samples_per_pixel) const
 			const auto u = (i + RandomDouble()) / (width_ - 1);
 			const auto v = (j + RandomDouble()) / (height_ - 1);
 			Ray r = camera_->GetRay(u, v);
-			pixel_color += RayColor(r, background_, world_, max_depth_);
+			pixel_color += RayColor(r, background_, world_, lights, max_depth_);
 		}
 
 		auto r = pixel_color.x();
@@ -85,7 +87,8 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 	return (-half_b - sqrt(discriminant)) / a;
 }
 
-Color Application::RayColor(const Ray& ray, const Color& background, const Hittable& world, const int depth)
+Color Application::RayColor(const Ray& ray, const Color& background, const Hittable& world,
+                            std::shared_ptr<Hittable>& lights, const int depth)
 {
 	if (depth <= 0)
 		return {0, 0, 0};
@@ -95,7 +98,6 @@ Color Application::RayColor(const Ray& ray, const Color& background, const Hitta
 		return background;
 
 	Ray scattered;
-	Color attenuation;
 	const Color emmited = rec.material->Emitted(rec.point);
 
 	double pdf;
@@ -104,25 +106,16 @@ Color Application::RayColor(const Ray& ray, const Color& background, const Hitta
 	if (!rec.material->Scatter(ray, rec, albedo, scattered, pdf))
 		return emmited;
 
-	auto on_light = Point3(RandomDouble(213, 343), 554, RandomDouble(227, 332));
-	auto to_light = on_light - rec.point;
-	auto distance_squared = to_light.LengthSquared();
-	to_light = UnitVector(to_light);
+	auto p0 = std::make_shared<HittablePdf>(lights, rec.point);
+	auto p1 = std::make_shared<CosinePdf>(rec.normal);
+	MixturePdf mixed_pdf(p0, p1);
 
-	if (Dot(to_light, rec.normal) < 0)
-		return emmited;
-
-	double light_area = (343 - 213) * (332 - 227);
-	auto light_cosine = fabs(to_light.y());
-	if (light_cosine < 0.000001)
-		return emmited;
-
-	pdf = distance_squared / (light_cosine * light_area);
-	scattered = Ray(rec.point, to_light);
-
+	scattered = Ray(rec.point, mixed_pdf.Generate());
+	pdf = mixed_pdf.Value(scattered.Direction());
+	
 	return emmited
 		+ albedo * rec.material->ScatteringPdf(ray, rec, scattered)
-		* RayColor(scattered, background, world, depth - 1) / pdf;
+		* RayColor(scattered, background, world, lights, depth - 1) / pdf;
 }
 
 unsigned char* Application::GetImage() const

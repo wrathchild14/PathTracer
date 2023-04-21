@@ -21,7 +21,7 @@ public:
 	int GetImageHeight() const;
 
 private:
-	static Color RayColor(const Ray& ray, const Color& background, const Hittable& world, const int depth);
+	static Color RayColor(const Ray& ray, const Color& background, const Hittable& world, std::shared_ptr<Hittable>& lights, const int depth);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
 	// Cornell Box example with 2 spheres

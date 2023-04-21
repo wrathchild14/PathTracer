@@ -27,6 +27,25 @@ public:
 		return true;
 	}
 
+	double PdfValue(const Point3& origin, const Vec3& v) const override
+	{
+		HitRecord rec;
+		if (!this->Hit(Ray(origin, v), 0.001, infinity, rec))
+			return 0;
+
+		const auto area = (x1_ - x0_) * (z1_ - z0_);
+		const auto distance_squared = rec.t * rec.t * v.LengthSquared();
+		const auto cosine = fabs(Dot(v, rec.normal) / v.Length());
+
+		return distance_squared / (cosine * area);
+	}
+
+	Vec3 Random(const Point3& origin) const override
+	{
+		const auto random_point = Point3(RandomDouble(x0_, x1_), k_, RandomDouble(z0_, z1_));
+		return random_point - origin;
+	}
+
 private:
 	std::shared_ptr<Material> material_;
 	double x0_{}, x1_{}, z0_{}, z1_{}, k_{};
