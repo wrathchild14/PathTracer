@@ -1,10 +1,11 @@
 #include "Application.h"
 
-#include "FlipFace.h"
-#include "Pdf.h"
+#include "Primitives/FlipFace.h"
+#include "Materials/Pdf.h"
 
 std::shared_ptr<Hittable> lights =
-		std::make_shared<XZRectangle>(213, 343, 227, 332, 554, std::shared_ptr<Material>());
+	std::make_shared<XZRectangle>(213, 343, 227, 332, 554, std::shared_ptr<Material>());
+
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
                                                                       aspect_ratio_(aspect_ratio)
@@ -40,6 +41,7 @@ HittableList Application::GetCBExample() const
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
 	objects.Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
 	objects.Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
+	
 	objects.Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(213, 343, 227, 332, 554, light)));
 
 	return objects;
@@ -106,13 +108,13 @@ Color Application::RayColor(const Ray& ray, const Color& background, const Hitta
 	if (!rec.material->Scatter(ray, rec, albedo, scattered, pdf))
 		return emmited;
 
-	auto p0 = std::make_shared<HittablePdf>(lights, rec.point);
-	auto p1 = std::make_shared<CosinePdf>(rec.normal);
-	MixturePdf mixed_pdf(p0, p1);
+	const auto p0 = std::make_shared<HittablePdf>(lights, rec.point);
+	const auto p1 = std::make_shared<CosinePdf>(rec.normal);
+	const MixturePdf mixed_pdf(p0, p1);
 
 	scattered = Ray(rec.point, mixed_pdf.Generate());
 	pdf = mixed_pdf.Value(scattered.Direction());
-	
+
 	return emmited
 		+ albedo * rec.material->ScatteringPdf(ray, rec, scattered)
 		* RayColor(scattered, background, world, lights, depth - 1) / pdf;

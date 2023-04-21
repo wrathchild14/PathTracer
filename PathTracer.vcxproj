@@ -382,8 +382,8 @@
     <ClInclude Include="Sources\Materials\DiffuseLight.h" />
     <ClInclude Include="Sources\Materials\Lambertian.h" />
     <ClInclude Include="Sources\Materials\Material.h" />
-    <ClInclude Include="Sources\OrthonomalBasis.h" />
-    <ClInclude Include="Sources\Pdf.h" />
+    <ClInclude Include="Sources\Materials\Pdf.h" />
+    <ClInclude Include="Sources\Primitives\FlipFace.h" />
     <ClInclude Include="Sources\Primitives\Hittable.h" />
     <ClInclude Include="Sources\Primitives\HittableList.h" />
     <ClInclude Include="Sources\Primitives\Rectangle.h" />
@@ -391,11 +391,9 @@
     <ClInclude Include="Sources\Utility\AABB.h" />
     <ClInclude Include="Sources\Utility\Camera.h" />
     <ClInclude Include="Sources\Utility\Common.h" />
+    <ClInclude Include="Sources\Utility\OrthonomalBasis.h" />
     <ClInclude Include="Sources\Utility\Ray.h" />
     <ClInclude Include="Sources\Utility\Vec3.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Sources\FlipFace.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

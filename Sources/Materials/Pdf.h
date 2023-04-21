@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "OrthonomalBasis.h"
-#include "Utility/Vec3.h"
+#include "../Utility/OrthonomalBasis.h"
+#include "../Utility/Vec3.h"
 
 class Pdf
 {

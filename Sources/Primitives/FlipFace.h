@@ -1,8 +1,8 @@
 #pragma once
 #include <memory>
 
-#include "Primitives/Hittable.h"
-#include "Utility/Ray.h"
+#include "Hittable.h"
+#include "../Utility/Ray.h"
 
 class FlipFace : public Hittable
 {

@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "Utility/Vec3.h"
+#include "Vec3.h"
 
 class ONB
 {
