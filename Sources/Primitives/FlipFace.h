@@ -17,7 +17,7 @@ public:
 		if (!ptr->Hit(r, t_min, t_max, rec))
 			return false;
 
-		rec.FrontFace = !rec.FrontFace;
+		rec.front_face = !rec.front_face;
 		return true;
 	}
 

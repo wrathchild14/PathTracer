@@ -9,12 +9,12 @@ struct HitRecord
 	Vec3 normal;
 	std::shared_ptr<Material> material;
 	double t{};
-	bool FrontFace{};
+	bool front_face{};
 
 	void SetFaceNormal(const Ray& ray, const Vec3& outward_normal)
 	{
-		FrontFace = Dot(ray.Direction(), outward_normal) < 0;
-		normal = FrontFace ? outward_normal : -outward_normal;
+		front_face = Dot(ray.Direction(), outward_normal) < 0;
+		normal = front_face ? outward_normal : -outward_normal;
 	}
 };
 

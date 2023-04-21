@@ -22,7 +22,7 @@ public:
 	Color Emitted(const Ray& r_in, const HitRecord& rec, double u, double v,
 	              const Point3& p) const override
 	{
-		if (rec.FrontFace)
+		if (rec.front_face)
 			return p;
 		return {0, 0, 0};
 	}
