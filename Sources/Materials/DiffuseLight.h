@@ -11,16 +11,12 @@ public:
 	{
 	}
 
-	bool Scatter(const Ray& r_in, const HitRecord& rec, Color& attenuation, Ray& scattered, double& pdf) const override
+	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec) const override
 	{
 		return false;
 	}
 
-
-	Color Emitted(const Point3& p) const override { return emit_; }
-
-	Color Emitted(const Ray& r_in, const HitRecord& rec, double u, double v,
-	              const Point3& p) const override
+	Color Emitted(const Ray& r_in, const HitRecord& rec, const Point3& p) const override
 	{
 		if (rec.front_face)
 			return p;

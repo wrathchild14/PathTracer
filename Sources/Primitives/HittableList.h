@@ -19,6 +19,8 @@ public:
 
 	bool Hit(
 		const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
+	double PdfValue(const Point3& o, const Vec3& v) const override;
+	Vec3 Random(const Vec3& o) const override;
 
 private:
 	std::vector<std::shared_ptr<Hittable>> objects_;
