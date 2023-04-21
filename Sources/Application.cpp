@@ -64,6 +64,12 @@ void Application::Render(const int j, const int samples_per_pixel) const
 		auto r = pixel_color.x();
 		auto g = pixel_color.y();
 		auto b = pixel_color.z();
+
+		// Surface acne
+		if (r != r) r = 0.0;
+		if (g != g) g = 0.0;
+		if (b != b) b = 0.0;
+		
 		const auto scale = 1.0 / samples_per_pixel;
 		r = sqrt(scale * r);
 		g = sqrt(scale * g);
