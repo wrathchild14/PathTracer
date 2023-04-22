@@ -1,6 +1,6 @@
 #include "Rectangle.h"
 
-bool XZRectangle::Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
+bool XZRectangle::Hit(const Ray& r, const double t_min, const double t_max, HitRecord& rec) const
 {
 	const auto t = (k_ - r.Origin().y()) / r.Direction().y();
 	if (t < t_min || t > t_max)
@@ -17,7 +17,7 @@ bool XZRectangle::Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) 
 	return true;
 }
 
-bool YZRectangle::Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
+bool YZRectangle::Hit(const Ray& r, const double t_min, const double t_max, HitRecord& rec) const
 {
 	const auto t = (k_ - r.Origin().x()) / r.Direction().x();
 	if (t < t_min || t > t_max)
@@ -34,7 +34,7 @@ bool YZRectangle::Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) 
 	return true;
 }
 
-bool XYRectangle::Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const
+bool XYRectangle::Hit(const Ray& r, const double t_min, const double t_max, HitRecord& rec) const
 {
 	const auto t = (k_ - r.Origin().z()) / r.Direction().z();
 	if (t < t_min || t > t_max)
