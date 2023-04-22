@@ -88,8 +88,7 @@ int main(int, char**)
 
 	// Settings
 	const Application application(600, 1.0);
-	int fov = 40;
-	int depth = 30;
+	int sample_depth = 30;
 	int samples_per_pixel = 5;
 	const int width = application.GetImageWidth();
 	const int height = application.GetImageHeight();
@@ -117,8 +116,7 @@ int main(int, char**)
 		ImGui::NewFrame();
 
 		ImGui::Begin("Properties");
-		ImGui::SliderInt("FOV", &fov, 10, 120);
-		ImGui::SliderInt("Depth", &depth, 1, 100);
+		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 500);
 		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
 		if (ImGui::Button("Render"))
@@ -132,7 +130,7 @@ int main(int, char**)
 		{
 			if (row_counter >= 0)
 			{
-				application.Render(row_counter, samples_per_pixel, depth, is_russian_roulette);
+				application.Render(row_counter, samples_per_pixel, sample_depth, is_russian_roulette);
 				if (row_counter % 10 == 0)
 				{
 					const auto image = application.GetImage();
