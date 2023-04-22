@@ -8,8 +8,6 @@ Application::Application(const int width, const double aspect_ratio): width_(wid
 {
 	image_ = new unsigned char[height_ * width_ * 3];
 	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
-	max_depth_ = 20;
-
 	world_ = std::make_shared<HittableList>();
 	lights_ = std::make_shared<HittableList>();
 	AddCBExampleToWorld();
@@ -41,24 +39,36 @@ void Application::AddCBExampleToWorld() const
 
 	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
 	// world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 300, 300), 20, light)));
-	world_->Add(std::make_shared<FlipFace>(std::make_shared<YZRectangle>(250, 300, 260, 320, 554, light)));
+	// world_->Add(std::make_shared<FlipFace>(std::make_shared<YZRectangle>(250, 300, 260, 320, 554, light)));
 
 	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
 	// lights_->Add(std::make_shared<Sphere>(Point3(150, 300, 300), 20));
-	lights_->Add(std::make_shared<YZRectangle>(250, 300, 260, 320, 554));
+	// lights_->Add(std::make_shared<YZRectangle>(250, 300, 260, 320, 554));
 }
 
-void Application::Render(const int j, const int samples_per_pixel) const
+void Application::Render(const int j, const int samples_per_pixel, const int depth,const bool is_russian_roulette) const
 {
 	for (int i = 0; i < width_; ++i)
 	{
 		Color pixel_color(0, 0, 0);
+		Color pixel;
 		for (int s = 0; s < samples_per_pixel; ++s)
 		{
 			const auto u = (i + RandomDouble()) / (width_ - 1);
 			const auto v = (j + RandomDouble()) / (height_ - 1);
 			Ray r = camera_->GetRay(u, v);
-			pixel_color += RayColor(r, background_, world_, lights_, max_depth_);
+
+			pixel_color += RayColor(r, background_, world_, lights_, depth);
+
+			if (s > samples_per_pixel * 30 / 100 && is_russian_roulette)
+			{
+				pixel = UnitVector(pixel_color);
+				double rr_probability = std::max(pixel.x(), std::max(pixel.y(), pixel.z()));
+				if (rr_probability < 0.1) rr_probability = 0.1;
+				const auto random_double = RandomDouble();
+				if (random_double > rr_probability)
+					break;
+			}
 		}
 
 		auto r = pixel_color.x();
@@ -69,7 +79,7 @@ void Application::Render(const int j, const int samples_per_pixel) const
 		if (r != r) r = 0.0;
 		if (g != g) g = 0.0;
 		if (b != b) b = 0.0;
-		
+
 		const auto scale = 1.0 / samples_per_pixel;
 		r = sqrt(scale * r);
 		g = sqrt(scale * g);

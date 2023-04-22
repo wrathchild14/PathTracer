@@ -89,11 +89,13 @@ int main(int, char**)
 	// Settings
 	const Application application(600, 1.0);
 	int fov = 40;
+	int depth = 30;
 	int samples_per_pixel = 5;
 	const int width = application.GetImageWidth();
 	const int height = application.GetImageHeight();
 	int row_counter = height - 1;
-	bool image_is_rendering = false;
+	bool is_image_rendering = false;
+	bool is_russian_roulette = false;
 
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -116,19 +118,21 @@ int main(int, char**)
 
 		ImGui::Begin("Properties");
 		ImGui::SliderInt("FOV", &fov, 10, 120);
-		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 250);
+		ImGui::SliderInt("Depth", &depth, 1, 100);
+		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 500);
+		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
 		if (ImGui::Button("Render"))
 		{
 			row_counter = height - 1;
-			image_is_rendering = true;
+			is_image_rendering = true;
 		}
 		ImGui::End();
 
-		if (image_is_rendering)
+		if (is_image_rendering)
 		{
 			if (row_counter >= 0)
 			{
-				application.Render(row_counter, samples_per_pixel);
+				application.Render(row_counter, samples_per_pixel, depth, is_russian_roulette);
 				if (row_counter % 10 == 0)
 				{
 					const auto image = application.GetImage();
@@ -141,7 +145,7 @@ int main(int, char**)
 			}
 			else
 			{
-				image_is_rendering = false;
+				is_image_rendering = false;
 			}
 			row_counter--;
 		}

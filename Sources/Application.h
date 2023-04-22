@@ -14,7 +14,7 @@ public:
 	Application(int width, double aspect_ratio);
 	~Application();
 
-	void Render(const int j, const int samples_per_pixel) const;
+	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;
@@ -33,7 +33,6 @@ private:
 	std::shared_ptr<HittableList> lights_;
 	std::shared_ptr<HittableList> world_;
 	Camera* camera_;
-	int max_depth_;
 
 	unsigned char* image_{};
 	double aspect_ratio_{};
