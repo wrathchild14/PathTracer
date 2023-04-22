@@ -72,6 +72,7 @@ int main(int, char**)
 	(void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	ImGui::StyleColorsDark();
 
@@ -87,7 +88,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	const Application application(600, 1.0);
+	const Application application(200, 1.0);
 	int sample_depth = 30;
 	int samples_per_pixel = 5;
 	const int width = application.GetImageWidth();
@@ -114,8 +115,8 @@ int main(int, char**)
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		ImGui::Begin("Properties");
+		
+		ImGui::Begin("Properties", 0);
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 500);
 		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
@@ -148,7 +149,7 @@ int main(int, char**)
 			row_counter--;
 		}
 
-		ImGui::Begin("Render window");
+		ImGui::Begin("Render window", 0);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const auto viewport_width = ImGui::GetContentRegionAvail().x;
 		const auto viewport_height = ImGui::GetContentRegionAvail().y;
