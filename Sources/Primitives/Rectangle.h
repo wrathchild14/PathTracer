@@ -17,8 +17,8 @@ public:
 	}
 
 	XZRectangle(const double x0, const double x1, const double z0, const double z1, const double k,
-	            std::shared_ptr<Material> mat)
-		: material_(std::move(mat)), x0_(x0), x1_(x1), z0_(z0), z1_(z1), k_(k)
+	            std::shared_ptr<Material> material)
+		: material_(std::move(material)), x0_(x0), x1_(x1), z0_(z0), z1_(z1), k_(k)
 	{
 	}
 

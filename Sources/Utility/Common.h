@@ -19,7 +19,7 @@ inline double RandomDouble(const double min, const double max)
 	return min + (max - min) * RandomDouble();
 }
 
-inline int RandomInt(int min, int max) {
+inline int RandomInt(const int min, const int max) {
 	return static_cast<int>(RandomDouble(min, max+1));
 }
 
