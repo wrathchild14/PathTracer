@@ -29,6 +29,7 @@ Oren-Nayar with 0.5 roughness
 ![Oren Nayar result](Results/orennayar.jpg)
 
 Final render with nearly 500 samples per pixel in a 800:800 picture
+
 ![500 samples per pixel](Results/final_render.jpg)
 
 
