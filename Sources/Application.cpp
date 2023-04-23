@@ -30,7 +30,7 @@ void Application::AddCornellBoxToWorld() const
 	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
 	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
 	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
-	
+
 	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
 	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
 	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
@@ -177,7 +177,8 @@ std::shared_ptr<Material> Application::RandomMaterial() const
 
 void Application::AddRandomSphereLight() const
 {
-	const auto light = std::make_shared<DiffuseLight>(Color(RandomInt(5, 20), RandomInt(5, 20), RandomInt(5, 20)));
+	const int intensity = RandomInt(5, 20);
+	const auto light = std::make_shared<DiffuseLight>(Color(intensity, intensity, intensity));
 	const auto random_radius = RandomInt(5, 30);
 	const auto random_point = Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(0, 500));
 	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(random_point, random_radius, light)));
