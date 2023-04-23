@@ -8,8 +8,9 @@
 #endif
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+#include <tinyfiledialogs.h>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -88,11 +89,11 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	const Application application(500, 1.0);
+	auto* application = new Application(500, 1.0);
 	int sample_depth = 30;
 	int samples_per_pixel = 5;
-	const int width = application.GetImageWidth();
-	const int height = application.GetImageHeight();
+	int width = application->GetImageWidth();
+	int height = application->GetImageHeight();
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
 	bool is_russian_roulette = false;
@@ -122,6 +123,7 @@ int main(int, char**)
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
 		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
+		ImGui::SameLine();
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
 		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
 		if (ImGui::Button("Render"))
@@ -129,16 +131,66 @@ int main(int, char**)
 			row_counter = height - 1;
 			is_image_rendering = true;
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Stop render"))
+		{
+			is_image_rendering = false;
+		}
+
+		if (ImGui::Button("200 width"))
+		{
+			is_image_rendering = false;
+			application->SetWidth(200);
+			width = application->GetImageWidth();
+			height = application->GetImageHeight();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("400 width"))
+		{
+			is_image_rendering = false;
+			application->SetWidth(400);
+			width = application->GetImageWidth();
+			height = application->GetImageHeight();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("600 width"))
+		{
+			is_image_rendering = false;
+			application->SetWidth(400);
+			width = application->GetImageWidth();
+			height = application->GetImageHeight();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("800 width"))
+		{
+			is_image_rendering = false;
+			application->SetWidth(800);
+			width = application->GetImageWidth();
+			height = application->GetImageHeight();
+		}
+
+		if (ImGui::Button("Save Image"))
+		{
+			std::string file_path = tinyfd_saveFileDialog("Save Image", "image.jpg", 0, nullptr, nullptr);
+			if (!file_path.empty())
+			{
+				stbi_flip_vertically_on_write(true);
+				stbi_write_png(file_path.c_str(), application->GetImageWidth(), application->GetImageHeight(), 3,
+				               application->GetImage(), application->GetImageWidth() * 3);
+			}
+		}
+
 		ImGui::End();
 
 		if (is_image_rendering)
 		{
 			if (row_counter >= 0)
 			{
-				application.Render(row_counter, samples_per_pixel, sample_depth, is_russian_roulette, is_oren_nayar, roughness);
+				application->Render(row_counter, samples_per_pixel, sample_depth, is_russian_roulette, is_oren_nayar,
+				                    roughness);
 				if (row_counter % 10 == 0)
 				{
-					const auto image = application.GetImage();
+					const auto image = application->GetImage();
 					if (image != nullptr)
 					{
 						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,

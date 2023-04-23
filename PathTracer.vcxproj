@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="External\tinyfiledialogs.c" />
     <ClCompile Include="Sources\Application.cpp" />
     <ClCompile Include="External\ImGui\Backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="External\ImGui\Backends\imgui_impl_opengl3.cpp" />
@@ -378,6 +379,8 @@
     <ClInclude Include="External\ImGui\imstb_textedit.h" />
     <ClInclude Include="External\ImGui\imstb_truetype.h" />
     <ClInclude Include="External\stb_image.h" />
+    <ClInclude Include="External\stb_image_write.h" />
+    <ClInclude Include="External\tinyfiledialogs.h" />
     <ClInclude Include="Sources\Application.h" />
     <ClInclude Include="Sources\Materials\DiffuseLight.h" />
     <ClInclude Include="Sources\Materials\Glass.h" />

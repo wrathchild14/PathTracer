@@ -51,6 +51,18 @@
     <ClCompile Include="Sources\Application.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Primitives\HittableList.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Primitives\Rectangle.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Primitives\Sphere.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="External\tinyfiledialogs.c">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -86,19 +98,65 @@
     <ClInclude Include="Sources\Application.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Ray.h">
+    <ClInclude Include="Sources\Materials\DiffuseLight.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Vec3.h">
+    <ClInclude Include="Sources\Materials\Glass.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="Sources\Main.h">
+    <ClInclude Include="Sources\Materials\Metal.h">
       <Filter>Headers</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="lena.png">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <ClInclude Include="Sources\Materials\Pdfs.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Materials\Lambertian.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Materials\Material.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Materials\Pdf.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Primitives\FlipFace.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Primitives\Hittable.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Primitives\HittableList.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Primitives\Rectangle.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Primitives\Sphere.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utility\AABB.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utility\Camera.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utility\Common.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utility\OrthonomalBasis.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utility\Ray.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Utility\Vec3.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="External\stb_image_write.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="External\tinyfiledialogs.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

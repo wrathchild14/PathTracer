@@ -15,6 +15,14 @@ Application::Application(const int width, const double aspect_ratio): width_(wid
 	AddCBExampleToWorld();
 }
 
+void Application::SetWidth(const int width)
+{
+	width_ = width;
+	height_ = static_cast<int>(width / aspect_ratio_);
+	delete[] image_;
+	image_ = new unsigned char[height_ * width_ * 3];
+}
+
 Application::~Application()
 {
 	free(image_);
@@ -43,9 +51,9 @@ void Application::AddCBExampleToWorld() const
 	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
 
 	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
-	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 400, 300), 10, light)));
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(250, 400, 300), 10, light)));
 	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
-	lights_->Add(std::make_shared<Sphere>(Point3(150, 400, 300), 20));
+	lights_->Add(std::make_shared<Sphere>(Point3(250, 400, 300), 10));
 }
 
 void Application::Render(const int j, const int samples_per_pixel, const int depth,

@@ -12,6 +12,7 @@ class Application
 {
 public:
 	Application(int width, double aspect_ratio);
+	void SetWidth(int width);
 	~Application();
 
 	void Render(int j, int samples_per_pixel, int depth, bool is_russian_roulette, bool is_oren_nayar,
