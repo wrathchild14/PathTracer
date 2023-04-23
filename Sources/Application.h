@@ -21,6 +21,7 @@ public:
 
 	int GetImageWidth() const;
 	int GetImageHeight() const;
+	void AddRandomSphere() const;
 
 private:
 	static Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
@@ -29,6 +30,7 @@ private:
 
 	// Cornell Box example with 2 spheres (and 2 lights?)
 	void AddCBExampleToWorld() const;
+	std::shared_ptr<Material> RandomMaterial() const;
 
 	int width_{};
 	int height_{};

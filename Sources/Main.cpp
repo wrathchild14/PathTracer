@@ -181,6 +181,9 @@ int main(int, char**)
 			}
 		}
 
+		if (ImGui::Button("Add random sphere"))
+			application->AddRandomSphere();
+		
 		ImGui::End();
 
 		if (is_image_rendering)

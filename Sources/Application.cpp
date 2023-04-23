@@ -173,3 +173,19 @@ int Application::GetImageHeight() const
 {
 	return height_;
 }
+
+void Application::AddRandomSphere() const
+{
+	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 1000), RandomInt(0, 500)),
+	                                     RandomInt(5, 100), RandomMaterial()));
+}
+
+std::shared_ptr<Material> Application::RandomMaterial() const
+{
+	const double r = RandomDouble();
+	if (r < 1.0 / 3.0)
+		return std::make_shared<Glass>(RandomDouble(0.5, 1.5));
+	if (r < 2.0 / 3.0)
+		return std::make_shared<Metal>(Color(RandomDouble(), RandomDouble(), RandomDouble()), RandomDouble());
+	return std::make_shared<Lambertian>(Color(RandomDouble(), RandomDouble(), RandomDouble()));
+}
