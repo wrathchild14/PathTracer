@@ -118,6 +118,7 @@ int main(int, char**)
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGui::DockSpaceOverViewport();
 
 		ImGui::Begin("Properties", nullptr);
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
