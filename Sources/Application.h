@@ -26,6 +26,7 @@ public:
 	int GetImageWidth() const;
 	int GetImageHeight() const;
 	void AddRandomSphere() const;
+	void AddRandomSphereLight() const;
 
 private:
 	static Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,

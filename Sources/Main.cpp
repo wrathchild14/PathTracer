@@ -183,7 +183,10 @@ int main(int, char**)
 
 		if (ImGui::Button("Add random sphere"))
 			application->AddRandomSphere();
-		
+		ImGui::SameLine();
+		if (ImGui::Button("Add random sphere light"))
+			application->AddRandomSphereLight();
+
 		ImGui::End();
 
 		if (is_image_rendering)

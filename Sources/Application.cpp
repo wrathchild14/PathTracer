@@ -47,9 +47,7 @@ void Application::AddCBExampleToWorld() const
 	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
 
 	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
-	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(250, 400, 300), 10, light)));
 	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
-	lights_->Add(std::make_shared<Sphere>(Point3(250, 400, 300), 10));
 }
 
 void Application::Render(const int j, const int samples_per_pixel, const int depth,
@@ -184,4 +182,13 @@ std::shared_ptr<Material> Application::RandomMaterial() const
 	if (r < 2.0 / 3.0)
 		return std::make_shared<Metal>(Color(RandomDouble(), RandomDouble(), RandomDouble()), RandomDouble());
 	return std::make_shared<Lambertian>(Color(RandomDouble(), RandomDouble(), RandomDouble()));
+}
+
+void Application::AddRandomSphereLight() const
+{
+	const auto light = std::make_shared<DiffuseLight>(Color(RandomInt(5, 20), RandomInt(5, 20), RandomInt(5, 20)));
+	const auto random_radius = RandomInt(5, 30);
+	const auto random_point = Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(0, 500));
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(random_point, random_radius, light)));
+	lights_->Add(std::make_shared<Sphere>(random_point, random_radius));
 }
