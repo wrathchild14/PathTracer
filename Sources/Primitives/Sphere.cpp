@@ -11,7 +11,6 @@ bool Sphere::Hit(const Ray& ray, const double t_min, const double t_max, HitReco
 	if (discriminant < 0) return false;
 	const auto sqrt_d = sqrt(discriminant);
 
-	// Find the nearest root that lies in the acceptable range.
 	auto root = (-half_b - sqrt_d) / a;
 	if (root < t_min || t_max < root)
 	{
@@ -21,10 +20,11 @@ bool Sphere::Hit(const Ray& ray, const double t_min, const double t_max, HitReco
 	}
 
 	rec.t = root;
+	rec.point = std::dynamic_pointer_cast<DiffuseLight>(material_) == nullptr ? ray.At(rec.t) : rec.point;
 	const Vec3 outward_normal = (rec.point - center_) / radius_;
 	rec.SetFaceNormal(ray, outward_normal);
 	rec.material = material_;
-	rec.point = ray.At(rec.t);
+	rec.point = std::dynamic_pointer_cast<DiffuseLight>(material_) != nullptr ? ray.At(rec.t) : rec.point;
 
 	return true;
 }

@@ -22,7 +22,7 @@ public:
 	{
 	}
 
-	bool Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
+	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
 
 	bool BoundingBox(double time0, double time1, AABB& output_box) const override
 	{
@@ -71,7 +71,7 @@ public:
 	{
 	}
 
-	bool Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
+	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
 
 	bool BoundingBox(double time0, double time1, AABB& output_box) const override
 	{
@@ -115,7 +115,7 @@ public:
 	{
 	}
 
-	bool Hit(const Ray& r, double t_min, double t_max, HitRecord& rec) const override;
+	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
 
 	bool BoundingBox(double time0, double time1, AABB& output_box) const override
 	{
