@@ -401,6 +401,9 @@
     <ClInclude Include="Sources\Utility\Ray.h" />
     <ClInclude Include="Sources\Utility\Vec3.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="readme.md" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
