@@ -186,6 +186,8 @@ int main(int, char**)
 		ImGui::SameLine();
 		if (ImGui::Button("Add random sphere light"))
 			application->AddRandomSphereLight();
+		if (ImGui::Button("Clear scene"))
+			application->CleanScene();
 
 		ImGui::End();
 

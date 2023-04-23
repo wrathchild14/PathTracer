@@ -25,16 +25,17 @@ public:
 
 	int GetImageWidth() const;
 	int GetImageHeight() const;
+
 	void AddRandomSphere() const;
 	void AddRandomSphereLight() const;
+	void CleanScene() const;
 
 private:
 	static Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	                      const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar, double roughness);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
-	// Cornell Box example with 2 spheres (and 2 lights?)
-	void AddCBExampleToWorld() const;
+	void AddCornellBoxToWorld() const;
 	std::shared_ptr<Material> RandomMaterial() const;
 
 	int width_{};

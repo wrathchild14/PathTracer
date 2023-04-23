@@ -8,7 +8,7 @@ Application::Application(const int width, const double aspect_ratio): width_(wid
 	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
 	world_ = std::make_shared<HittableList>();
 	lights_ = std::make_shared<HittableList>();
-	AddCBExampleToWorld();
+	AddCornellBoxToWorld();
 }
 
 void Application::SetWidth(const int width)
@@ -24,22 +24,13 @@ Application::~Application()
 	free(image_);
 }
 
-void Application::AddCBExampleToWorld() const
+void Application::AddCornellBoxToWorld() const
 {
 	auto red = std::make_shared<Lambertian>(Color(.65, .05, .05));
 	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
 	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
 	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
-	auto pink = std::make_shared<Lambertian>(Color(0.96, 0.06, 0.84));
-	auto weird_green = std::make_shared<Lambertian>(Color(0.29, 0.95, 0.67));
-	auto glass = std::make_shared<Glass>(1.4);
-	auto aluminum = std::make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
-
-	world_->Add(std::make_shared<Sphere>(Point3(150, 80, 300), 100, pink));
-	world_->Add(std::make_shared<Sphere>(Point3(440, 50, 40), 50, glass));
-	world_->Add(std::make_shared<Sphere>(Point3(300, 90, 190), 60, aluminum));
-
-	// Cornell Box
+	
 	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
 	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
 	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
@@ -191,4 +182,11 @@ void Application::AddRandomSphereLight() const
 	const auto random_point = Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(0, 500));
 	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(random_point, random_radius, light)));
 	lights_->Add(std::make_shared<Sphere>(random_point, random_radius));
+}
+
+void Application::CleanScene() const
+{
+	world_->Clear();
+	lights_->Clear();
+	AddCornellBoxToWorld();
 }
