@@ -42,11 +42,10 @@ void Application::AddCBExampleToWorld() const
 	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
 	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
 
-	// world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
-	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 520, 300), 10, light)));
-	// lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
-	lights_->Add(std::make_shared<Sphere>(Point3(150, 520, 300), 20));
-
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 400, 300), 10, light)));
+	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
+	lights_->Add(std::make_shared<Sphere>(Point3(150, 400, 300), 20));
 }
 
 void Application::Render(const int j, const int samples_per_pixel, const int depth,
@@ -111,7 +110,8 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 }
 
 Color Application::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
-                            const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar, const double roughness)
+                            const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
+                            const double roughness)
 {
 	if (depth <= 0)
 		return {0, 0, 0};
@@ -121,13 +121,19 @@ Color Application::RayColor(const Ray& ray, const Color& background, const std::
 		return background;
 
 	ScatterRecord s_rec;
-	const Color emitted = rec.material->Emitted(ray, rec, rec.point);
-	if (!rec.material->Scatter(ray, rec, s_rec, is_oren_nayar, roughness))
-		return emitted;
+	Color emitted;
+	if (rec.material != nullptr)
+	{
+		emitted = rec.material->Emitted(ray, rec, rec.point);
+
+		if (!rec.material->Scatter(ray, rec, s_rec, is_oren_nayar, roughness))
+			return emitted;
+	}
 
 	if (s_rec.is_specular)
 	{
-		return s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights, depth - 1, is_oren_nayar, roughness);
+		return s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights, depth - 1, is_oren_nayar,
+		                                    roughness);
 	}
 
 	const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
