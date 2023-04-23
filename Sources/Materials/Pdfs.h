@@ -1,5 +1,4 @@
 #pragma once
-#include "../Primitives/Hittable.h"
 
 class HittablePdf : public Pdf
 {

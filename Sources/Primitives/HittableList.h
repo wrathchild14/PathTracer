@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include "Hittable.h"
-#include "../Utility/Ray.h"
 
-#include <memory>
 #include <vector>
 
 class HittableList : public Hittable

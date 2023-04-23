@@ -1,12 +1,16 @@
 #pragma once
-#include "Primitives/HittableList.h"
 #include "Utility/Camera.h"
 #include "Utility/Ray.h"
-#include "Materials/DiffuseLight.h"
+
+#include "Primitives/HittableList.h"
 #include "Primitives/Rectangle.h"
+#include "Primitives/Sphere.h"
+#include "Primitives/FlipFace.h"
 
 #include "Materials/Lambertian.h"
-#include "Primitives/Sphere.h"
+#include "Materials/DiffuseLight.h"
+#include "Materials/Glass.h"
+#include "Materials/Metal.h"
 
 class Application
 {

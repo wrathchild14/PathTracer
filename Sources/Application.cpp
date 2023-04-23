@@ -1,9 +1,5 @@
 #include "Application.h"
 
-#include "Materials/Glass.h"
-#include "Materials/Metal.h"
-#include "Primitives/FlipFace.h"
-
 Application::Application(const int width, const double aspect_ratio): width_(width),
                                                                       height_(static_cast<int>(width / aspect_ratio)),
                                                                       aspect_ratio_(aspect_ratio)

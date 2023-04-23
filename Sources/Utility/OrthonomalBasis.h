@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "Vec3.h"
 
 class ONB
 {
@@ -34,7 +33,7 @@ private:
 inline void ONB::BuildFromW(const Vec3& n)
 {
 	axis_[2] = UnitVector(n);
-	Vec3 a = (fabs(w().x()) > 0.9) ? Vec3(0, 1, 0) : Vec3(1, 0, 0);
+	const Vec3 a = (fabs(w().x()) > 0.9) ? Vec3(0, 1, 0) : Vec3(1, 0, 0);
 	axis_[1] = UnitVector(Cross(w(), a));
 	axis_[0] = Cross(w(), v());
 }

@@ -4,8 +4,6 @@
 
 #include "Common.h"
 
-using std::sqrt;
-
 class Vec3
 {
 public:
@@ -63,7 +61,6 @@ public:
 		return (fabs(e[0]) < s) && (fabs(e[1]) < s) && (fabs(e[2]) < s);
 	}
 
-public:
 	double e[3];
 };
 
@@ -127,12 +124,12 @@ inline Vec3 UnitVector(Vec3 v)
 	return v / v.Length();
 }
 
-inline static Vec3 Random()
+static Vec3 Random()
 {
 	return {RandomDouble(), RandomDouble(), RandomDouble()};
 }
 
-inline static Vec3 Random(const double min, const double max)
+static Vec3 Random(const double min, const double max)
 {
 	return {RandomDouble(min, max), RandomDouble(min, max), RandomDouble(min, max)};
 }
@@ -153,6 +150,19 @@ inline Vec3 RandomInHemisphere(const Vec3& normal)
 	if (Dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
 		return in_unit_sphere;
 	return -in_unit_sphere;
+}
+
+inline Vec3 RandomCosineDirection()
+{
+	const auto r1 = RandomDouble();
+	const auto r2 = RandomDouble();
+	const auto z = sqrt(1 - r2);
+
+	const auto phi = 2 * pi * r1;
+	const auto x = cos(phi) * sqrt(r2);
+	const auto y = sin(phi) * sqrt(r2);
+
+	return {x, y, z};
 }
 
 inline Vec3 RandomUnitVector()

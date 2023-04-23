@@ -1,7 +1,5 @@
 #pragma once
-#include "Material.h"
 #include "Pdfs.h"
-#include "../Utility/Ray.h"
 
 class Lambertian : public Material
 {

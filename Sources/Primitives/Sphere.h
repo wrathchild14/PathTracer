@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "HittableList.h"
+#include "Hittable.h"
 #include "../Materials/DiffuseLight.h"
 
 class Material;

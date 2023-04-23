@@ -1,9 +1,6 @@
 #pragma once
-#include <memory>
 
 #include "Hittable.h"
-#include "../Utility/Ray.h"
-#include "../Materials/Material.h"
 
 class XZRectangle : public Hittable
 {
@@ -23,12 +20,6 @@ public:
 	}
 
 	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
-
-	bool BoundingBox(double time0, double time1, AABB& output_box) const override
-	{
-		output_box = AABB(Point3(x0_, k_ - 0.0001, z0_), Point3(x1_, k_ + 0.0001, z1_));
-		return true;
-	}
 
 	double PdfValue(const Point3& origin, const Vec3& v) const override
 	{
@@ -73,12 +64,6 @@ public:
 
 	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
 
-	bool BoundingBox(double time0, double time1, AABB& output_box) const override
-	{
-		output_box = AABB(Point3(k_ - 0.0001, y0_, z0_), Point3(k_ + 0.0001, y1_, z1_));
-		return true;
-	}
-
 	double PdfValue(const Point3& origin, const Vec3& v) const override
 	{
 		HitRecord rec;
@@ -116,12 +101,6 @@ public:
 	}
 
 	bool Hit(const Ray& ray, double t_min, double t_max, HitRecord& rec) const override;
-
-	bool BoundingBox(double time0, double time1, AABB& output_box) const override
-	{
-		output_box = AABB(Point3(x0_, y0_, k_ - 0.0001), Point3(x1_, y1_, k_ + 0.0001));
-		return true;
-	}
 
 private:
 	std::shared_ptr<Material> material_;

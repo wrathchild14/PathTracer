@@ -1,6 +1,4 @@
 #pragma once
-#include "Material.h"
-#include "../Utility/Ray.h"
 
 class Glass : public Material
 {
