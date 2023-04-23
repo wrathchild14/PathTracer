@@ -14,7 +14,8 @@ public:
 	Application(int width, double aspect_ratio);
 	~Application();
 
-	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette) const;
+	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette, const bool is_oren_nayar, const
+	            bool roughness) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;
@@ -22,7 +23,7 @@ public:
 
 private:
 	static Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
-	                      const std::shared_ptr<Hittable>& lights, int depth);
+	                      const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar, const double roughness);
 	static double HitSphere(const Point3& center, double radius, const Ray& r);
 
 	// Cornell Box example with 2 spheres (and 2 lights?)

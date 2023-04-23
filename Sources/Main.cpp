@@ -88,7 +88,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	const Application application(200, 1.0);
+	const Application application(500, 1.0);
 	int sample_depth = 30;
 	int samples_per_pixel = 5;
 	const int width = application.GetImageWidth();
@@ -96,6 +96,8 @@ int main(int, char**)
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
 	bool is_russian_roulette = false;
+	bool is_oren_nayar = false;
+	float roughness = 0.5;
 
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -115,11 +117,13 @@ int main(int, char**)
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-		
-		ImGui::Begin("Properties", 0);
+
+		ImGui::Begin("Properties", nullptr);
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
-		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 500);
+		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
 		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
+		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
+		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
 		if (ImGui::Button("Render"))
 		{
 			row_counter = height - 1;
@@ -131,7 +135,7 @@ int main(int, char**)
 		{
 			if (row_counter >= 0)
 			{
-				application.Render(row_counter, samples_per_pixel, sample_depth, is_russian_roulette);
+				application.Render(row_counter, samples_per_pixel, sample_depth, is_russian_roulette, is_oren_nayar, roughness);
 				if (row_counter % 10 == 0)
 				{
 					const auto image = application.GetImage();
@@ -149,7 +153,7 @@ int main(int, char**)
 			row_counter--;
 		}
 
-		ImGui::Begin("Render window", 0);
+		ImGui::Begin("Render window", nullptr);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 		const auto viewport_width = ImGui::GetContentRegionAvail().x;
 		const auto viewport_height = ImGui::GetContentRegionAvail().y;

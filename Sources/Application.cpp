@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include "Materials/Glass.h"
+#include "Materials/Metal.h"
 #include "Primitives/FlipFace.h"
 
 Application::Application(const int width, const double aspect_ratio): width_(width),
@@ -26,9 +28,12 @@ void Application::AddCBExampleToWorld() const
 	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
 	auto pink = std::make_shared<Lambertian>(Color(0.96, 0.06, 0.84));
 	auto weird_green = std::make_shared<Lambertian>(Color(0.29, 0.95, 0.67));
+	auto glass = std::make_shared<Glass>(1.4);
+	auto aluminum = std::make_shared<Metal>(Color(0.8, 0.85, 0.88), 0.0);
 
 	world_->Add(std::make_shared<Sphere>(Point3(150, 80, 300), 100, pink));
-	world_->Add(std::make_shared<Sphere>(Point3(330, 50, 100), 50, weird_green));
+	world_->Add(std::make_shared<Sphere>(Point3(440, 50, 40), 50, glass));
+	world_->Add(std::make_shared<Sphere>(Point3(300, 90, 190), 60, aluminum));
 
 	// Cornell Box
 	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
@@ -38,15 +43,14 @@ void Application::AddCBExampleToWorld() const
 	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
 
 	// world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
-	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 520, 300), 20, light)));
-	// world_->Add(std::make_shared<FlipFace>(std::make_shared<YZRectangle>(250, 300, 260, 320, 554, light)));
-
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(Point3(150, 520, 300), 10, light)));
 	// lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
 	lights_->Add(std::make_shared<Sphere>(Point3(150, 520, 300), 20));
-	// lights_->Add(std::make_shared<YZRectangle>(250, 300, 260, 320, 554));
+
 }
 
-void Application::Render(const int j, const int samples_per_pixel, const int depth,const bool is_russian_roulette) const
+void Application::Render(const int j, const int samples_per_pixel, const int depth,
+                         const bool is_russian_roulette, const bool is_oren_nayar, const bool roughness) const
 {
 	for (int i = 0; i < width_; ++i)
 	{
@@ -58,7 +62,7 @@ void Application::Render(const int j, const int samples_per_pixel, const int dep
 			const auto v = (j + RandomDouble()) / (height_ - 1);
 			Ray r = camera_->GetRay(u, v);
 
-			pixel_color += RayColor(r, background_, world_, lights_, depth);
+			pixel_color += RayColor(r, background_, world_, lights_, depth, is_oren_nayar, roughness);
 
 			if (s > samples_per_pixel * 30 / 100 && is_russian_roulette)
 			{
@@ -107,7 +111,7 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 }
 
 Color Application::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
-                            const std::shared_ptr<Hittable>& lights, const int depth)
+                            const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar, const double roughness)
 {
 	if (depth <= 0)
 		return {0, 0, 0};
@@ -118,8 +122,13 @@ Color Application::RayColor(const Ray& ray, const Color& background, const std::
 
 	ScatterRecord s_rec;
 	const Color emitted = rec.material->Emitted(ray, rec, rec.point);
-	if (!rec.material->Scatter(ray, rec, s_rec))
+	if (!rec.material->Scatter(ray, rec, s_rec, is_oren_nayar, roughness))
 		return emitted;
+
+	if (s_rec.is_specular)
+	{
+		return s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights, depth - 1, is_oren_nayar, roughness);
+	}
 
 	const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
 	const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
@@ -129,7 +138,7 @@ Color Application::RayColor(const Ray& ray, const Color& background, const std::
 
 	return emitted
 		+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
-		* RayColor(scattered, background, world, lights, depth - 1) / pdf;
+		* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness) / pdf;
 }
 
 unsigned char* Application::GetImage() const

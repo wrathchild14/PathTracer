@@ -10,11 +10,17 @@ public:
 	{
 	}
 
-	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec) const override
+	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar, double roughness) const
 	{
 		s_rec.is_specular = false;
 		s_rec.attenuation = albedo_;
-		s_rec.pdf = std::make_shared<CosinePdf>(rec.normal);
+		if (oren_nayar)
+			s_rec.pdf = std::make_shared<OrenNayarPdf>(rec.normal, roughness);
+		else
+			s_rec.pdf = std::make_shared<CosinePdf>(rec.normal);
+		// s_rec.pdf = oren_nayar
+		// 	            ? std::make_shared<OrenNayarPdf>(rec.normal, 0)
+		// 	            : std::make_shared<CosinePdf>(rec.normal);
 		return true;
 	}
 

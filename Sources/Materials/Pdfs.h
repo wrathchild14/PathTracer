@@ -67,3 +67,54 @@ public:
 private:
 	std::shared_ptr<Pdf> pdfs_[2];
 };
+
+class OrenNayarPdf : public Pdf
+{
+public:
+	OrenNayarPdf(const Vec3& w, const double roughness) : roughness_(roughness)
+	{
+		uvw_.BuildFromW(w);
+	}
+
+	double Value(const Vec3& direction) const override
+	{
+		const auto cosine = Dot(UnitVector(direction), uvw_.w());
+		if (cosine <= 0)
+		{
+			return 0;
+		}
+
+		const auto sine = std::sqrt(1 - cosine * cosine);
+		const auto sin_alpha = sine / std::max(cosine, 1e-6);
+		const auto tan_beta = roughness_ * sin_alpha;
+
+		const auto A = 1.0 - 0.5 * roughness_ * roughness_ / (roughness_ * roughness_ + 0.33);
+		const auto B = 0.45 * roughness_ * roughness_ / (roughness_ * roughness_ + 0.09);
+
+		const auto pdf_value = cosine * (A + B * std::max(0.0, Dot(direction, uvw_.u()))
+			* sin_alpha * std::tan(std::acos(cosine)));
+		return pdf_value / pi;
+	}
+
+	Vec3 Generate() const override
+	{
+		return uvw_.local(RandomOrenNayarDirection(roughness_));
+	}
+
+private:
+	ONB uvw_;
+	double roughness_;
+
+	Vec3 RandomOrenNayarDirection(const double roughness) const
+	{
+		const double u = RandomDouble();
+		const double v = RandomDouble();
+
+		const double phi = 2 * pi * u;
+		const double cos_theta = std::sqrt((1 - v) * (1 - v) * (1 - roughness * roughness) + v);
+		const double sin_theta = std::sqrt(1 - cos_theta * cos_theta);
+
+		const auto local_direction = Vec3(cos(phi) * sin_theta, sin(phi) * sin_theta, cos_theta);
+		return local_direction;
+	}
+};
