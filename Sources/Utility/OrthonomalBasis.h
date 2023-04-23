@@ -13,7 +13,7 @@ public:
 	Vec3 v() const { return axis_[1]; }
 	Vec3 w() const { return axis_[2]; }
 
-	Vec3 local(double a, double b, double c) const
+	Vec3 local(const double a, const double b, const double c) const
 	{
 		return a * u() + b * v() + c * w();
 	}

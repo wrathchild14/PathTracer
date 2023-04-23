@@ -85,7 +85,7 @@ public:
 
 		const auto sine = std::sqrt(1 - cosine * cosine);
 		const auto sin_alpha = sine / std::max(cosine, 1e-6);
-		const auto tan_beta = roughness_ * sin_alpha;
+		// const auto tan_beta = roughness_ * sin_alpha;
 
 		const auto A = 1.0 - 0.5 * roughness_ * roughness_ / (roughness_ * roughness_ + 0.33);
 		const auto B = 0.45 * roughness_ * roughness_ / (roughness_ * roughness_ + 0.09);
