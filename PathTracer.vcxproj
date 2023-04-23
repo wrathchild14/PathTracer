@@ -380,6 +380,8 @@
     <ClInclude Include="External\stb_image.h" />
     <ClInclude Include="Sources\Application.h" />
     <ClInclude Include="Sources\Materials\DiffuseLight.h" />
+    <ClInclude Include="Sources\Materials\Glass.h" />
+    <ClInclude Include="Sources\Materials\Metal.h" />
     <ClInclude Include="Sources\Materials\Pdfs.h" />
     <ClInclude Include="Sources\Materials\Lambertian.h" />
     <ClInclude Include="Sources\Materials\Material.h" />

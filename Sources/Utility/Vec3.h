@@ -152,11 +152,15 @@ inline Vec3 RandomInHemisphere(const Vec3& normal)
 	const Vec3 in_unit_sphere = RandomInUnitSphere();
 	if (Dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
 		return in_unit_sphere;
-	else
-		return -in_unit_sphere;
+	return -in_unit_sphere;
 }
 
 inline Vec3 RandomUnitVector()
 {
 	return UnitVector(RandomInUnitSphere());
+}
+
+inline Vec3 Reflect(const Vec3& d, const Vec3& n)
+{
+	return d - 2 * Dot(d, n) * n;
 }
