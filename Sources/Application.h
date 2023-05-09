@@ -15,7 +15,8 @@
 class Application
 {
 public:
-	Application(int width, double aspect_ratio);
+	Application();
+	Application(const int width, const double aspect_ratio);
 	void SetWidth(int width);
 	~Application();
 

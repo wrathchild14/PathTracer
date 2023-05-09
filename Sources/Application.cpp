@@ -1,8 +1,17 @@
 #include "Application.h"
 
-Application::Application(const int width, const double aspect_ratio): width_(width),
-                                                                      height_(static_cast<int>(width / aspect_ratio)),
-                                                                      aspect_ratio_(aspect_ratio)
+Application::Application() : width_(400), aspect_ratio_(1.0)
+{
+	height_ = static_cast<int>(width_ / aspect_ratio_);
+	image_ = new unsigned char[height_ * width_ * 3];
+	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
+	world_ = std::make_shared<HittableList>();
+	lights_ = std::make_shared<HittableList>();
+	AddCornellBoxToWorld();
+}
+
+Application::Application(const int width, const double aspect_ratio) :
+	width_(width), height_(static_cast<int>(width / aspect_ratio)), aspect_ratio_(aspect_ratio)
 {
 	image_ = new unsigned char[height_ * width_ * 3];
 	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
@@ -42,10 +51,12 @@ void Application::AddCornellBoxToWorld() const
 }
 
 void Application::Render(const int j, const int samples_per_pixel, const int depth,
-                         const bool is_russian_roulette, const bool is_oren_nayar, const bool roughness) const
+	const bool is_russian_roulette, const bool is_oren_nayar, const bool roughness) const
 {
 	for (int i = 0; i < width_; ++i)
 	{
+		// neural_net = MyNet("my_net.pt");
+		// neural_net.predict(image);
 		Color pixel_color(0, 0, 0);
 		Color pixel;
 		for (int s = 0; s < samples_per_pixel; ++s)
@@ -103,11 +114,11 @@ double Application::HitSphere(const Point3& center, const double radius, const R
 }
 
 Color Application::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
-                            const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
-                            const double roughness)
+	const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
+	const double roughness)
 {
 	if (depth <= 0)
-		return {0, 0, 0};
+		return { 0, 0, 0 };
 	HitRecord rec;
 
 	if (!world->Hit(ray, 0.001, infinity, rec))
@@ -126,7 +137,7 @@ Color Application::RayColor(const Ray& ray, const Color& background, const std::
 	if (s_rec.is_specular)
 	{
 		return s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights, depth - 1, is_oren_nayar,
-		                                    roughness);
+			roughness);
 	}
 
 	const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
@@ -162,16 +173,16 @@ int Application::GetImageHeight() const
 void Application::AddRandomSphere() const
 {
 	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 1000), RandomInt(0, 500)),
-	                                     RandomInt(5, 100), RandomMaterial()));
+		RandomInt(5, 100), RandomMaterial()));
 }
 
 std::shared_ptr<Material> Application::RandomMaterial() const
 {
-	const double r = RandomDouble();
-	if (r < 1.0 / 3.0)
-		return std::make_shared<Glass>(RandomDouble(0.5, 1.5));
-	if (r < 2.0 / 3.0)
-		return std::make_shared<Metal>(Color(RandomDouble(), RandomDouble(), RandomDouble()), RandomDouble());
+	// const double r = RandomDouble();
+	// if (r < 1.0 / 3.0)
+	// return std::make_shared<Glass>(RandomDouble(0.5, 1.5));
+	// if (r < 2.0 / 3.0)
+	// return std::make_shared<Metal>(Color(RandomDouble(), RandomDouble(), RandomDouble()), RandomDouble());
 	return std::make_shared<Lambertian>(Color(RandomDouble(), RandomDouble(), RandomDouble()));
 }
 

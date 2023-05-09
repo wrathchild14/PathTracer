@@ -89,7 +89,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	auto* application = new Application(500, 1.0);
+	auto* application = new Application();
 	int sample_depth = 30;
 	int samples_per_pixel = 5;
 	int width = application->GetImageWidth();
