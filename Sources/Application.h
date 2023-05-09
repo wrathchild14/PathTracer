@@ -20,8 +20,8 @@ public:
 	void SetWidth(int width);
 	~Application();
 
-	void Render(int j, int samples_per_pixel, int depth, bool is_russian_roulette, bool is_oren_nayar,
-	            bool roughness) const;
+	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette, const bool is_oren_nayar,
+	            const double roughness) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;
