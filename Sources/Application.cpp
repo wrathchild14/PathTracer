@@ -3,7 +3,7 @@
 Application::Application() : width_(400), aspect_ratio_(1.0)
 {
 	height_ = static_cast<int>(width_ / aspect_ratio_);
-	image_ = new unsigned char[height_ * width_ * 3];
+	image_ = new std::uint8_t[height_ * width_ * 3];
 	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
 	world_ = std::make_shared<HittableList>();
 	lights_ = std::make_shared<HittableList>();
@@ -13,19 +13,11 @@ Application::Application() : width_(400), aspect_ratio_(1.0)
 Application::Application(const int width, const double aspect_ratio) :
 	width_(width), height_(static_cast<int>(width / aspect_ratio)), aspect_ratio_(aspect_ratio)
 {
-	image_ = new unsigned char[height_ * width_ * 3];
+	image_ = new std::uint8_t[height_ * width_ * 3];
 	camera_ = new Camera(Point3(278, 278, -800), Point3(278, 278, 0), Vec3(0, 1, 0), 40, aspect_ratio_);
 	world_ = std::make_shared<HittableList>();
 	lights_ = std::make_shared<HittableList>();
 	AddCornellBoxToWorld();
-}
-
-void Application::SetWidth(const int width)
-{
-	width_ = width;
-	height_ = static_cast<int>(width / aspect_ratio_);
-	delete[] image_;
-	image_ = new unsigned char[height_ * width_ * 3];
 }
 
 Application::~Application()
@@ -33,21 +25,31 @@ Application::~Application()
 	free(image_);
 }
 
-void Application::AddCornellBoxToWorld() const
+void Application::SetWidth(const int width)
 {
-	auto red = std::make_shared<Lambertian>(Color(.65, .05, .05));
-	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
-	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
-	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
+	width_ = width;
+	height_ = static_cast<int>(width / aspect_ratio_);
+	delete[] image_;
+	image_ = new std::uint8_t[height_ * width_ * 3];
+}
 
-	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
-	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
-	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
-	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
-	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
+std::uint8_t* Application::GetImage() const
+{
+	if (image_ != nullptr)
+	{
+		return image_;
+	}
+	return nullptr;
+}
 
-	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
-	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
+int Application::GetImageWidth() const
+{
+	return width_;
+}
+
+int Application::GetImageHeight() const
+{
+	return height_;
 }
 
 void Application::Render(const int j, const int samples_per_pixel, const int depth,
@@ -55,8 +57,6 @@ void Application::Render(const int j, const int samples_per_pixel, const int dep
 {
 	for (int i = 0; i < width_; ++i)
 	{
-		// neural_net = MyNet("my_net.pt");
-		// neural_net.predict(image);
 		Color pixel_color(0, 0, 0);
 		Color pixel;
 		for (int s = 0; s < samples_per_pixel; ++s)
@@ -151,38 +151,65 @@ Color Application::RayColor(const Ray& ray, const Color& background, const std::
 		* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness) / pdf;
 }
 
-unsigned char* Application::GetImage() const
+
+void Application::GenerateRandomImages(const int count) const
 {
-	if (image_ != nullptr)
+	for (int counter = 1; counter <= count; counter++)
 	{
-		return image_;
+		// clean scene and generate random spheres
+		this->CleanScene();
+		const auto random_int = RandomInt(4, 14);
+		for (int i = 0; i < random_int; i++)
+			this->AddRandomSphere();
+
+		// render image
+		for (int i = this->height_; i >= 0; i--)
+			this->Render(i, 5, 2, false, false, 0.5);
+
+		// save image - absolute path for now... (todo)
+		std::string path = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\generated_image_)" +
+			std::to_string(counter) + ".jpg";
+		stbi_flip_vertically_on_write(true);
+		stbi_write_png(path.c_str(), width_, height_, 3,
+		               image_, width_ * 3);
 	}
-	return nullptr;
 }
 
-int Application::GetImageWidth() const
+void Application::AddCornellBoxToWorld() const
 {
-	return width_;
-}
+	auto red = std::make_shared<Lambertian>(Color(.65, .05, .05));
+	auto white = std::make_shared<Lambertian>(Color(.73, .73, .73));
+	auto green = std::make_shared<Lambertian>(Color(.12, .45, .15));
+	auto light = std::make_shared<DiffuseLight>(Color(15, 15, 15));
 
-int Application::GetImageHeight() const
-{
-	return height_;
+	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 555, green));
+	world_->Add(std::make_shared<YZRectangle>(0, 555, 0, 555, 0, red));
+	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 0, white));
+	world_->Add(std::make_shared<XZRectangle>(0, 555, 0, 555, 555, white));
+	world_->Add(std::make_shared<XYRectangle>(0, 555, 0, 555, 555, white));
+
+	world_->Add(std::make_shared<FlipFace>(std::make_shared<XZRectangle>(250, 300, 260, 320, 554, light)));
+	lights_->Add(std::make_shared<XZRectangle>(250, 300, 260, 320, 554));
 }
 
 void Application::AddRandomSphere() const
 {
 	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 1000), RandomInt(0, 500)),
-	                                     RandomInt(5, 100), RandomMaterial()));
+	                                     RandomInt(5, 100), RandomLambertMaterial()));
 }
 
 std::shared_ptr<Material> Application::RandomMaterial() const
 {
-	// const double r = RandomDouble();
-	// if (r < 1.0 / 3.0)
-	// return std::make_shared<Glass>(RandomDouble(0.5, 1.5));
-	// if (r < 2.0 / 3.0)
-	// return std::make_shared<Metal>(Color(RandomDouble(), RandomDouble(), RandomDouble()), RandomDouble());
+	const double r = RandomDouble();
+	if (r < 1.0 / 3.0)
+		return std::make_shared<Glass>(RandomDouble(0.5, 1.5));
+	if (r < 2.0 / 3.0)
+		return std::make_shared<Metal>(Color(RandomDouble(), RandomDouble(), RandomDouble()), RandomDouble());
+	return std::make_shared<Lambertian>(Color(RandomDouble(), RandomDouble(), RandomDouble()));
+}
+
+std::shared_ptr<Material> Application::RandomLambertMaterial() const
+{
 	return std::make_shared<Lambertian>(Color(RandomDouble(), RandomDouble(), RandomDouble()));
 }
 

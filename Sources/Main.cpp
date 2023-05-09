@@ -9,7 +9,6 @@
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
 #include <tinyfiledialogs.h>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
@@ -89,7 +88,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	auto* application = new Application();
+	const auto application = new Application();
 	int sample_depth = 30;
 	int samples_per_pixel = 5;
 	int width = application->GetImageWidth();
@@ -99,6 +98,7 @@ int main(int, char**)
 	bool is_russian_roulette = false;
 	bool is_oren_nayar = false;
 	float roughness = 0.5;
+	int number_g_images = 5;
 
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
@@ -188,6 +188,11 @@ int main(int, char**)
 			application->AddRandomSphereLight();
 		if (ImGui::Button("Clear scene"))
 			application->CleanScene();
+
+		ImGui::Text("Image generation WIP - app will most surely? crash");
+		ImGui::InputInt("#images", &number_g_images);
+		if (ImGui::Button("Generate"))
+			application->GenerateRandomImages(number_g_images);
 
 		ImGui::End();
 

@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include "stb_image_write.h"
+
 #include "Utility/Camera.h"
 #include "Utility/Ray.h"
 
@@ -20,12 +23,15 @@ public:
 	void SetWidth(int width);
 	~Application();
 
-	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette, const bool is_oren_nayar,
+	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette,
+	            const bool is_oren_nayar,
 	            const double roughness) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;
 	int GetImageHeight() const;
+
+	void GenerateRandomImages(int count) const;
 
 	void AddRandomSphere() const;
 	void AddRandomSphereLight() const;
@@ -38,6 +44,7 @@ private:
 
 	void AddCornellBoxToWorld() const;
 	std::shared_ptr<Material> RandomMaterial() const;
+	std::shared_ptr<Material> RandomLambertMaterial() const;
 
 	int width_{};
 	int height_{};
@@ -45,7 +52,7 @@ private:
 	std::shared_ptr<HittableList> world_;
 	Camera* camera_;
 
-	unsigned char* image_{};
+	std::uint8_t* image_;
 	double aspect_ratio_{};
 	Color background_ = Color(0.624, 1, 0.996);
 };
