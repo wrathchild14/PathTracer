@@ -167,8 +167,8 @@ void Application::GenerateRandomImages(const int count) const
 			this->Render(i, 5, 2, false, false, 0.5);
 
 		// save image - absolute path for now... (todo)
-		std::string path = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\generated_image_)" +
-			std::to_string(counter) + ".jpg";
+		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";
+		std::string path = location + R"(\generated_image_)" + std::to_string(counter) + ".jpg";
 		stbi_flip_vertically_on_write(true);
 		stbi_write_png(path.c_str(), width_, height_, 3,
 		               image_, width_ * 3);
