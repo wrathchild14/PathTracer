@@ -194,8 +194,8 @@ void Application::AddCornellBoxToWorld() const
 
 void Application::AddRandomSphere() const
 {
-	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 1000), RandomInt(0, 500)),
-	                                     RandomInt(5, 100), RandomLambertMaterial()));
+	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500),
+		RandomInt(0, 500), RandomInt(0, 500)), RandomInt(5, 100), RandomMaterial()));
 }
 
 std::shared_ptr<Material> Application::RandomMaterial() const
