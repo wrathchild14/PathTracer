@@ -175,6 +175,11 @@ void Application::GenerateRandomImages(const int count) const
 	}
 }
 
+void Application::PrintLabels()
+{
+	world_->GetLabels(*camera_, width_, height_);
+}
+
 void Application::AddCornellBoxToWorld() const
 {
 	auto red = std::make_shared<Lambertian>(Color(.65, .05, .05));

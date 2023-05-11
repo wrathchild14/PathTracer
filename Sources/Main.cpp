@@ -194,6 +194,9 @@ int main(int, char**)
 		if (ImGui::Button("Generate"))
 			application->GenerateRandomImages(number_g_images);
 
+		if (ImGui::Button("Print labels"))
+			application->PrintLabels();
+		
 		ImGui::End();
 
 		if (is_image_rendering)
