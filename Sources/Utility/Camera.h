@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-	Camera(const Point3 look_from, const Point3 look_at, const Vec3 up, const double fov, const double aspect_ratio)
+	Camera(const Point3& look_from, const Point3& look_at, const Vec3& up, const double fov, const double aspect_ratio)
 	{
 		const auto theta = DegreesToRadians(fov);
 		const auto h = tan(theta / 2);
@@ -24,7 +24,7 @@ public:
 
 	Ray GetRay(const double s, const double t) const
 	{
-		return Ray(origin_, lower_left_corner_ + s * horizontal_ + t * vertical_ - origin_);
+		return {origin_, lower_left_corner_ + s * horizontal_ + t * vertical_ - origin_};
 	}
 
 private:

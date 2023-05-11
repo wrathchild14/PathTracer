@@ -22,6 +22,9 @@ public:
 	double PdfValue(const Point3& o, const Vec3& v) const override;
 	Vec3 Random(const Point3& o) const override;
 
+	Point3 GetCenter() const;
+	double GetRadius() const;
+
 private:
 	Vec3 RandomToSphere(double radius, double distance_squared) const;
 

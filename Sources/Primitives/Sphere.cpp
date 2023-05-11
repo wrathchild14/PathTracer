@@ -51,6 +51,16 @@ Vec3 Sphere::Random(const Point3& o) const
 	return uvw.local(RandomToSphere(radius_, distance_squared));
 }
 
+Point3 Sphere::GetCenter() const
+{
+	return center_;
+}
+
+double Sphere::GetRadius() const
+{
+	return radius_;
+}
+
 Vec3 Sphere::RandomToSphere(const double radius, const double distance_squared) const
 {
 	const auto r1 = RandomDouble();
