@@ -56,15 +56,16 @@ std::vector<Label> HittableList::GetLabels(const Camera& camera, const int& widt
 			const double sphere_radius = sphere->GetRadius();
 			const auto sphere_position = sphere->GetCenter();
 			const auto view_position = glm::vec3(view_matrix * glm::vec4(sphere_position.x(),
-			                                                       sphere_position.y(),
-			                                                       sphere_position.z(), 1.0));
+			                                                             sphere_position.y(),
+			                                                             sphere_position.z(), 1.0));
 			const glm::mat4 projection_matrix = glm::perspective(glm::radians(camera.GetFov()),
-			                                               camera.GetAspectRatio(), 0.1, 100.0);
+			                                                     camera.GetAspectRatio(), 0.1, 100.0);
 			const glm::vec4 clip_position = projection_matrix * glm::vec4(view_position, 1.0);
 			const glm::vec3 ndc_position = glm::vec3(clip_position) / clip_position.w;
 
 			const double half_fov_tan = tan(glm::radians(camera.GetFov() / 2.0));
-			const double half_width = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan * camera.GetAspectRatio() + 8;
+			const double half_width = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan * camera.
+				GetAspectRatio() + 8;
 			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan + 8;
 
 			const double x = (static_cast<double>(ndc_position.x) + 1.0) * 0.5 * width;

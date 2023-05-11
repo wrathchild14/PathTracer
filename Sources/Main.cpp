@@ -196,7 +196,7 @@ int main(int, char**)
 
 		if (ImGui::Button("Print labels"))
 			application->Labels();
-		
+
 		ImGui::End();
 
 		if (is_image_rendering)

@@ -8,7 +8,8 @@ public:
 	{
 	}
 
-	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar, double roughness) const
+	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar,
+	             double roughness) const override
 	{
 		s_rec.is_specular = false;
 		s_rec.attenuation = albedo_;

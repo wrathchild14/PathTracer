@@ -19,13 +19,13 @@ class Application
 {
 public:
 	Application();
-	Application(const int width, const double aspect_ratio);
+	Application(int width, double aspect_ratio);
 	void SetWidth(int width);
 	~Application();
 
-	void Render(const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette,
-	            const bool is_oren_nayar,
-	            const double roughness) const;
+	void Render(int j, int samples_per_pixel, int depth, bool is_russian_roulette,
+	            bool is_oren_nayar,
+	            double roughness) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;
@@ -33,7 +33,7 @@ public:
 
 	void GenerateRandomImages(int count) const;
 	void Labels() const;
-	
+
 	void AddRandomSphere() const;
 	void AddRandomSphereLight() const;
 	void CleanScene() const;

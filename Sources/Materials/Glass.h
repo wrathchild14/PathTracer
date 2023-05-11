@@ -7,7 +7,8 @@ public:
 	{
 	}
 
-	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar, const double roughness) const override
+	bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar,
+	             const double roughness) const override
 	{
 		s_rec.is_specular = true;
 		s_rec.pdf = nullptr;

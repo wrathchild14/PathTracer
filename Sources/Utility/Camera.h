@@ -53,7 +53,6 @@ public:
 		return look_at_;
 	}
 
-
 private:
 	Point3 origin_{};
 	Point3 lower_left_corner_{};

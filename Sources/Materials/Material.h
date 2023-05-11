@@ -21,7 +21,8 @@ public:
 		return {0, 0, 0};
 	}
 
-	virtual bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar, const double roughness) const
+	virtual bool Scatter(const Ray& r_in, const HitRecord& rec, ScatterRecord& s_rec, const bool oren_nayar,
+	                     const double roughness) const
 	{
 		return false;
 	}

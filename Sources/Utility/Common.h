@@ -19,8 +19,9 @@ inline double RandomDouble(const double min, const double max)
 	return min + (max - min) * RandomDouble();
 }
 
-inline int RandomInt(const int min, const int max) {
-	return static_cast<int>(RandomDouble(min, max+1));
+inline int RandomInt(const int min, const int max)
+{
+	return static_cast<int>(RandomDouble(min, max + 1));
 }
 
 inline double Clamp(const double x, const double min, const double max)
