@@ -1,4 +1,5 @@
 ﻿#include "HittableList.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 bool HittableList::Hit(const Ray& ray, const double t_min, const double t_max, HitRecord& rec) const
 {
@@ -38,43 +39,54 @@ Vec3 HittableList::Random(const Vec3& o) const
 
 std::vector<Label> HittableList::GetLabels(const Camera& camera, const int& width, const int& height) const
 {
+	std::vector<Label> labels;
 	for (const auto& object : objects_)
 	{
 		std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>(object);
 		if (sphere)
 		{
-			const auto sphere_center = sphere->GetCenter();
+			const auto camera_pos = camera.GetPosition();
+			const auto camera_target = camera.GetTarget();
+			const auto camera_up = camera.GetUp();
+			const glm::mat4 view_matrix = lookAt(
+				glm::vec3(camera_pos.x(), camera_pos.y(), camera_pos.z()),
+				glm::vec3(camera_target.x(), camera_target.y(), camera_target.z()),
+				glm::vec3(camera_up.x(), camera_up.y(), camera_up.z()));
 
-			const auto c = UnitVector(sphere_center - camera.GetPosition());
-			const auto theta = acos(Dot(c, UnitVector(camera.GetDirection())));
-			const auto d = sphere->GetRadius() / sin(theta);
-			const auto h = 2 * d * tan(camera.GetFov() / 2);
-			const auto w = h * camera.GetAspectRatio();
+			const double sphere_radius = sphere->GetRadius();
+			const auto sphere_position = sphere->GetCenter();
+			const auto view_position = glm::vec3(view_matrix * glm::vec4(sphere_position.x(),
+			                                                       sphere_position.y(),
+			                                                       sphere_position.z(), 1.0));
+			const glm::mat4 projection_matrix = glm::perspective(glm::radians(camera.GetFov()),
+			                                               camera.GetAspectRatio(), 0.1, 100.0);
+			const glm::vec4 clip_position = projection_matrix * glm::vec4(view_position, 1.0);
+			const glm::vec3 ndc_position = glm::vec3(clip_position) / clip_position.w;
 
-			Vec3 up = -UnitVector(camera.GetUp());
-			Vec3 right = UnitVector(Cross(up, camera.GetDirection()));
-			const auto ul = camera.GetPosition() + d * camera.GetDirection() - (h / 2.0) * up - (w / 2.0) * right;
-			const auto lr = ul + h * up + w * right;
+			const double half_fov_tan = tan(glm::radians(camera.GetFov() / 2.0));
+			const double half_width = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan * camera.GetAspectRatio() + 8;
+			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan + 8;
 
-			const auto ul_normalized = Vec3((2.0 * ul.x() / width) - 1.0, (2.0 * ul.y() / height) - 1.0, 0);
-			const auto lr_normalized = Vec3((2.0 * lr.x() / width) - 1.0, (2.0 * lr.y() / height) - 1.0, 0);
-			
-			// Assume width and height are the dimensions of the screen in pixels
-			const auto x_ul_ndc = (2 * (ul_normalized.x() / width)) - 1;
-			const auto y_ul_ndc = 1 - (2 * (ul_normalized.y() / height));
-			const auto x_lr_ndc = (2 * (lr_normalized.x() / width)) - 1;
-			const auto y_lr_ndc = 1 - (2 * (lr_normalized.y() / height));
+			const double x = (static_cast<double>(ndc_position.x) + 1.0) * 0.5 * width;
+			const double y = (1.0 - static_cast<double>(ndc_position.y)) * 0.5 * height;
 
-			// Assume screen_width and screen_height are the dimensions of the screen in pixels
-			const auto ul_x_screen = (x_ul_ndc + 1) * w / 2;
-			const auto ul_y_screen = (y_ul_ndc + 1) * h / 2;
-			const auto lr_x_screen = (x_lr_ndc + 1) * w / 2;
-			const auto lr_y_screen = (y_lr_ndc + 1) * h / 2;
+			// const double x_min = x - half_width;
+			// const double x_max = x + half_width;
+			// const double y_min = y - half_height;
+			// const double y_max = y + half_height;
+			// auto top_left = Vec3(x_min, y_min, 0);
+			// auto bottom_right = Vec3(x_max, y_max, 0);
+			// std::cout << "Sphere with center on screen " << sphere->GetCenter() << std::endl;
+			// std::cout << "Screen space: " << x << " " << y << "\n";
+			// std::cout << "Bounding box coordinates:" << std::endl;
+			// std::cout << "Top left: " << x_min << " " << y_min << std::endl;
+			// std::cout << "Bottom right: " << x_max << " " << y_max << std::endl << std::endl;
 
-			std::cout << "Sphere with center on screen " << sphere_center << " is visible on the screen with dimensions "
-					  << w << "x" << h << " pixels.\n";
-			std::cout << "Upper left corner: " << ul_x_screen << " " << ul_y_screen << "\n";
-			std::cout << "Lower right corner: " << lr_x_screen << " " << lr_y_screen << "\n";
+			Label label{
+				1, static_cast<int>(x), static_cast<int>(y), static_cast<int>(half_width) * 2,
+				static_cast<int>(half_height) * 2
+			};
+			labels.push_back(label);
 		}
 	}
 	return {};

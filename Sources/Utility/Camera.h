@@ -5,7 +5,9 @@
 class Camera
 {
 public:
-	Camera(const Point3& look_from, const Point3& look_at, const Vec3& up, const double fov, const double aspect_ratio)
+	Camera(const Point3& look_from, const Point3& look_at, const Vec3& up, const double fov,
+	       const double aspect_ratio) : origin_(look_from), look_at_(look_at), up_(up), fov_(fov),
+	                                    aspect_ratio_(aspect_ratio)
 	{
 		const auto theta = DegreesToRadians(fov);
 		const auto h = tan(theta / 2);
@@ -16,16 +18,9 @@ public:
 		const auto u = UnitVector(Cross(up, w));
 		const auto v = Cross(w, u);
 
-		up_ = up;
-		aspect_ratio_ = aspect_ratio;
-		fov_ = fov;
-		origin_ = look_from;
-		direction_ = look_at;
 		horizontal_ = viewport_width * u;
 		vertical_ = viewport_height * v;
 		lower_left_corner_ = origin_ - horizontal_ / 2 - vertical_ / 2 - w;
-		top_right_corner_ = origin_ + horizontal_ / 2 + vertical_ / 2;
-
 	}
 
 	Ray GetRay(const double s, const double t) const
@@ -53,22 +48,20 @@ public:
 		return up_;
 	}
 
-	Vec3 GetDirection() const
+	Vec3 GetTarget() const
 	{
-		return direction_;
+		return look_at_;
 	}
 
-	Point3 top_right_corner_{};
-	Point3 lower_left_corner_{};
 
 private:
 	Point3 origin_{};
-	Vec3 direction_;
-	
+	Point3 lower_left_corner_{};
+	Vec3 look_at_;
 	Vec3 horizontal_{};
 	Vec3 vertical_{};
-
 	Vec3 up_;
+
 	double fov_;
 	double aspect_ratio_;
 };

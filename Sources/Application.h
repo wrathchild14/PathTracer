@@ -32,7 +32,7 @@ public:
 	int GetImageHeight() const;
 
 	void GenerateRandomImages(int count) const;
-	void PrintLabels();
+	void Labels() const;
 	
 	void AddRandomSphere() const;
 	void AddRandomSphereLight() const;

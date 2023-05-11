@@ -175,9 +175,9 @@ void Application::GenerateRandomImages(const int count) const
 	}
 }
 
-void Application::PrintLabels()
+void Application::Labels() const
 {
-	world_->GetLabels(*camera_, width_, height_);
+	auto labels = world_->GetLabels(*camera_, width_, height_);
 }
 
 void Application::AddCornellBoxToWorld() const
