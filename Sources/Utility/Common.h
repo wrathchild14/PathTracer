@@ -11,7 +11,7 @@ inline double DegreesToRadians(const double degrees)
 
 inline double RandomDouble()
 {
-	return rand() / (RAND_MAX + 1.0);
+	return static_cast<double>(rand()) / (RAND_MAX + 1.0);
 }
 
 inline double RandomDouble(const double min, const double max)
