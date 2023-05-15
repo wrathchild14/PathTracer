@@ -32,7 +32,7 @@ public:
 	int GetImageHeight() const;
 
 	void GenerateRandomImages(int count) const;
-	void Labels() const;
+	std::vector<Label> Labels() const;
 
 	void AddRandomSphere() const;
 	void AddRandomSphereLight() const;

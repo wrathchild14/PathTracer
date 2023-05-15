@@ -25,7 +25,7 @@
         <RootNamespace>PathTracer</RootNamespace>
         <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
         <ConfigurationType>Application</ConfigurationType>
         <UseDebugLibraries>true</UseDebugLibraries>
@@ -52,24 +52,24 @@
         <WholeProgramOptimization>true</WholeProgramOptimization>
         <CharacterSet>Unicode</CharacterSet>
     </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
     <ImportGroup Label="ExtensionSettings">
     </ImportGroup>
     <ImportGroup Label="Shared">
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform"/>
+        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     </ImportGroup>
-    <PropertyGroup Label="UserMacros"/>
+    <PropertyGroup Label="UserMacros" />
     <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
         <ClCompile>
             <WarningLevel>Level3</WarningLevel>
@@ -135,16 +135,16 @@
         </Link>
     </ItemDefinitionGroup>
     <ItemGroup>
-        <ClCompile Include="External\tinyfiledialogs.c"/>
-        <ClCompile Include="Sources\Application.cpp"/>
-        <ClCompile Include="External\ImGui\Backends\imgui_impl_glfw.cpp"/>
-        <ClCompile Include="External\ImGui\Backends\imgui_impl_opengl3.cpp"/>
-        <ClCompile Include="External\ImGui\imgui.cpp"/>
-        <ClCompile Include="External\ImGui\imgui_demo.cpp"/>
-        <ClCompile Include="External\ImGui\imgui_draw.cpp"/>
-        <ClCompile Include="External\ImGui\imgui_tables.cpp"/>
-        <ClCompile Include="External\ImGui\imgui_widgets.cpp"/>
-        <ClCompile Include="Sources\Main.cpp"/>
+        <ClCompile Include="External\tinyfiledialogs.c" />
+        <ClCompile Include="Sources\Application.cpp" />
+        <ClCompile Include="External\ImGui\Backends\imgui_impl_glfw.cpp" />
+        <ClCompile Include="External\ImGui\Backends\imgui_impl_opengl3.cpp" />
+        <ClCompile Include="External\ImGui\imgui.cpp" />
+        <ClCompile Include="External\ImGui\imgui_demo.cpp" />
+        <ClCompile Include="External\ImGui\imgui_draw.cpp" />
+        <ClCompile Include="External\ImGui\imgui_tables.cpp" />
+        <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
+        <ClCompile Include="Sources\Main.cpp" />
         <ClCompile Include="Sources\Primitives\HittableList.cpp">
             <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
             <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -369,42 +369,42 @@
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="External\ImGui\Backends\imgui_impl_glfw.h"/>
-        <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3.h"/>
-        <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3_loader.h"/>
-        <ClInclude Include="External\ImGui\imconfig.h"/>
-        <ClInclude Include="External\ImGui\imgui.h"/>
-        <ClInclude Include="External\ImGui\imgui_internal.h"/>
-        <ClInclude Include="External\ImGui\imstb_rectpack.h"/>
-        <ClInclude Include="External\ImGui\imstb_textedit.h"/>
-        <ClInclude Include="External\ImGui\imstb_truetype.h"/>
-        <ClInclude Include="External\stb_image.h"/>
-        <ClInclude Include="External\stb_image_write.h"/>
-        <ClInclude Include="External\tinyfiledialogs.h"/>
-        <ClInclude Include="Sources\Application.h"/>
-        <ClInclude Include="Sources\Materials\DiffuseLight.h"/>
-        <ClInclude Include="Sources\Materials\Glass.h"/>
-        <ClInclude Include="Sources\Materials\Metal.h"/>
-        <ClInclude Include="Sources\Materials\Pdfs.h"/>
-        <ClInclude Include="Sources\Materials\Lambertian.h"/>
-        <ClInclude Include="Sources\Materials\Material.h"/>
-        <ClInclude Include="Sources\Materials\Pdf.h"/>
-        <ClInclude Include="Sources\Primitives\FlipFace.h"/>
-        <ClInclude Include="Sources\Primitives\Hittable.h"/>
-        <ClInclude Include="Sources\Primitives\HittableList.h"/>
-        <ClInclude Include="Sources\Primitives\Rectangle.h"/>
-        <ClInclude Include="Sources\Primitives\Sphere.h"/>
-        <ClInclude Include="Sources\Utility\AABB.h"/>
-        <ClInclude Include="Sources\Utility\Camera.h"/>
-        <ClInclude Include="Sources\Utility\Common.h"/>
-        <ClInclude Include="Sources\Utility\OrthonomalBasis.h"/>
-        <ClInclude Include="Sources\Utility\Ray.h"/>
-        <ClInclude Include="Sources\Utility\Vec3.h"/>
+        <ClInclude Include="External\ImGui\Backends\imgui_impl_glfw.h" />
+        <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3.h" />
+        <ClInclude Include="External\ImGui\Backends\imgui_impl_opengl3_loader.h" />
+        <ClInclude Include="External\ImGui\imconfig.h" />
+        <ClInclude Include="External\ImGui\imgui.h" />
+        <ClInclude Include="External\ImGui\imgui_internal.h" />
+        <ClInclude Include="External\ImGui\imstb_rectpack.h" />
+        <ClInclude Include="External\ImGui\imstb_textedit.h" />
+        <ClInclude Include="External\ImGui\imstb_truetype.h" />
+        <ClInclude Include="External\stb_image.h" />
+        <ClInclude Include="External\stb_image_write.h" />
+        <ClInclude Include="External\tinyfiledialogs.h" />
+        <ClInclude Include="Sources\Application.h" />
+        <ClInclude Include="Sources\Materials\DiffuseLight.h" />
+        <ClInclude Include="Sources\Materials\Glass.h" />
+        <ClInclude Include="Sources\Materials\Metal.h" />
+        <ClInclude Include="Sources\Materials\Pdfs.h" />
+        <ClInclude Include="Sources\Materials\Lambertian.h" />
+        <ClInclude Include="Sources\Materials\Material.h" />
+        <ClInclude Include="Sources\Materials\Pdf.h" />
+        <ClInclude Include="Sources\Primitives\FlipFace.h" />
+        <ClInclude Include="Sources\Primitives\Hittable.h" />
+        <ClInclude Include="Sources\Primitives\HittableList.h" />
+        <ClInclude Include="Sources\Primitives\Rectangle.h" />
+        <ClInclude Include="Sources\Primitives\Sphere.h" />
+        <ClInclude Include="Sources\Utility\AABB.h" />
+        <ClInclude Include="Sources\Utility\Camera.h" />
+        <ClInclude Include="Sources\Utility\Common.h" />
+        <ClInclude Include="Sources\Utility\OrthonomalBasis.h" />
+        <ClInclude Include="Sources\Utility\Ray.h" />
+        <ClInclude Include="Sources\Utility\Vec3.h" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="readme.md"/>
+        <Content Include="readme.md" />
     </ItemGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
+    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
     <ImportGroup Label="ExtensionTargets">
     </ImportGroup>
 </Project>

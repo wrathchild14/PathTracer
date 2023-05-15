@@ -97,7 +97,7 @@ int main(int, char**)
 	bool is_image_rendering = false;
 	bool is_russian_roulette = false;
 	bool is_oren_nayar = false;
-	float roughness = 0.5;
+	float roughness = 0.5f;
 	int number_g_images = 5;
 
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -157,7 +157,7 @@ int main(int, char**)
 		if (ImGui::Button("600 width"))
 		{
 			is_image_rendering = false;
-			application->SetWidth(400);
+			application->SetWidth(600);
 			width = application->GetImageWidth();
 			height = application->GetImageHeight();
 		}
@@ -195,7 +195,13 @@ int main(int, char**)
 			application->GenerateRandomImages(number_g_images);
 
 		if (ImGui::Button("Print labels"))
-			application->Labels();
+		{
+			for (const auto& label : application->Labels())
+			{
+				std::cout << "Screen space: " << label.x << " " << label.y << " w: " << label.width << " h:" << label.
+					height << "\n";
+			}
+		}
 
 		ImGui::End();
 
@@ -224,10 +230,11 @@ int main(int, char**)
 
 		ImGui::Begin("Render window", nullptr);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-		const auto viewport_width = ImGui::GetContentRegionAvail().x;
-		const auto viewport_height = ImGui::GetContentRegionAvail().y;
-		// Uvs are for flipping the image
-		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), ImVec2(viewport_width, viewport_height),
+		// const auto viewport_width = ImGui::GetContentRegionAvail().x;
+		// const auto viewport_height = ImGui::GetContentRegionAvail().y;
+		// Uvs are for flipping the image, now the image is static and doesnt work with the viewport
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)),
+		             ImVec2(static_cast<float>(width), static_cast<float>(height)),
 		             ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::End();
 

@@ -59,7 +59,27 @@ void Application::Render(const int j, const int samples_per_pixel, const int dep
 	{
 		Color pixel_color(0, 0, 0);
 		Color pixel;
-		for (int s = 0; s < samples_per_pixel; ++s)
+
+		auto samples_per_pixel_final = samples_per_pixel;
+
+		const auto labels = Labels();
+		for (const auto& label : labels)
+		{
+			const auto min_x = label.x - label.width;
+			const auto max_x = label.x + label.width;
+
+			const auto max_y = height_ - (label.y - label.height);
+			const auto min_y = height_ - (label.y + label.height);
+
+			if (min_x < i && i < max_x &&
+				min_y < j && j < max_y)
+			{
+				samples_per_pixel_final = samples_per_pixel + 25;
+				// printf("log: for pixel height %d , i have max %f %f\n", j, min_y, max_y);
+			}
+		}
+
+		for (int s = 0; s < samples_per_pixel_final; ++s)
 		{
 			const auto u = (i + RandomDouble()) / (width_ - 1);
 			const auto v = (j + RandomDouble()) / (height_ - 1);
@@ -154,7 +174,7 @@ Color Application::RayColor(const Ray& ray, const Color& background, const std::
 
 void Application::GenerateRandomImages(const int count) const
 {
-	for (int counter = 1; counter <= count; counter++)
+	for (int counter = 1 + 60; counter <= count + 60; counter++)
 	{
 		// clean scene and generate random spheres
 		this->CleanScene();
@@ -175,9 +195,10 @@ void Application::GenerateRandomImages(const int count) const
 	}
 }
 
-void Application::Labels() const
+std::vector<Label> Application::Labels() const
 {
-	auto labels = world_->GetLabels(*camera_, width_, height_);
+	auto labels = world_->GetSphereLabels(*camera_, width_, height_);
+	return labels;
 }
 
 void Application::AddCornellBoxToWorld() const

@@ -9,10 +9,10 @@
 struct Label
 {
 	int object_class;
-	int x;
-	int y;
-	int width;
-	int height;
+	double x;
+	double y;
+	double width;
+	double height;
 };
 
 class HittableList : public Hittable
@@ -31,7 +31,7 @@ public:
 	double PdfValue(const Point3& o, const Vec3& v) const override;
 	Vec3 Random(const Vec3& o) const override;
 
-	std::vector<Label> GetLabels(const Camera& camera, const int& width, const int& height) const;
+	std::vector<Label> GetSphereLabels(const Camera& camera, const int& width, const int& height) const;
 
 private:
 	std::vector<std::shared_ptr<Hittable>> objects_;

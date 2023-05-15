@@ -37,7 +37,7 @@ Vec3 HittableList::Random(const Vec3& o) const
 	return objects_[RandomInt(0, int_size - 1)]->Random(o);
 }
 
-std::vector<Label> HittableList::GetLabels(const Camera& camera, const int& width, const int& height) const
+std::vector<Label> HittableList::GetSphereLabels(const Camera& camera, const int& width, const int& height) const
 {
 	std::vector<Label> labels;
 	for (const auto& object : objects_)
@@ -65,8 +65,8 @@ std::vector<Label> HittableList::GetLabels(const Camera& camera, const int& widt
 
 			const double half_fov_tan = tan(glm::radians(camera.GetFov() / 2.0));
 			const double half_width = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan * camera.
-				GetAspectRatio() + 8;
-			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan + 8;
+				GetAspectRatio();// + 8;
+			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan;// + 8;
 
 			const double x = (static_cast<double>(ndc_position.x) + 1.0) * 0.5 * width;
 			const double y = (1.0 - static_cast<double>(ndc_position.y)) * 0.5 * height;
@@ -77,18 +77,13 @@ std::vector<Label> HittableList::GetLabels(const Camera& camera, const int& widt
 			// const double y_max = y + half_height;
 			// auto top_left = Vec3(x_min, y_min, 0);
 			// auto bottom_right = Vec3(x_max, y_max, 0);
-			// std::cout << "Sphere with center on screen " << sphere->GetCenter() << std::endl;
-			// std::cout << "Screen space: " << x << " " << y << "\n";
-			// std::cout << "Bounding box coordinates:" << std::endl;
-			// std::cout << "Top left: " << x_min << " " << y_min << std::endl;
-			// std::cout << "Bottom right: " << x_max << " " << y_max << std::endl << std::endl;
+
 
 			Label label{
-				1, static_cast<int>(x), static_cast<int>(y), static_cast<int>(half_width) * 2,
-				static_cast<int>(half_height) * 2
+				1, x, y, half_width * 2.0, half_height * 2.0
 			};
 			labels.push_back(label);
 		}
 	}
-	return {};
+	return labels;
 }
