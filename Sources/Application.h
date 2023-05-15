@@ -18,11 +18,13 @@ public:
 	int GetImageHeight() const;
 
 	void GenerateRandomImages(int count) const;
-	std::vector<Label> GetLabels() const;
+	std::vector<ScreenBox> GetLabels() const;
 
 	void AddRandomSphere() const;
 	void AddRandomSphereLight() const;
 	void CleanScene() const;
+
+	void SetFocusingAmount(int amount) const;
 
 private:
 	std::unique_ptr<PathTracer> tracer_;

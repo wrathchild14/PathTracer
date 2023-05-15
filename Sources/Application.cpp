@@ -47,9 +47,9 @@ void Application::GenerateRandomImages(const int count) const
 	tracer_->GenerateRandomImages(count);
 }
 
-std::vector<Label> Application::GetLabels() const
+std::vector<ScreenBox> Application::GetLabels() const
 {
-	return tracer_->GetSphereLabels();
+	return tracer_->GetSphereScreenBoxes();
 }
 
 void Application::AddRandomSphere() const
@@ -65,4 +65,9 @@ void Application::AddRandomSphereLight() const
 void Application::CleanScene() const
 {
 	tracer_->CleanScene();
+}
+
+void Application::SetFocusingAmount(const int amount) const
+{
+	tracer_->SetFocusingAmount(amount);
 }

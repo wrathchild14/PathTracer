@@ -29,6 +29,9 @@ static void glfw_error_callback(int error, const char* description)
 	fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+void FocusingSamplesPerPixelChanged(int* value);
+
+
 int main(int, char**)
 {
 	glfwSetErrorCallback(glfw_error_callback);
@@ -94,6 +97,7 @@ int main(int, char**)
 	int height = application->GetImageHeight();
 	int sample_depth = 30;
 	int samples_per_pixel = 5;
+	int focusing_samples_per_pixel = 100;
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
 	bool focusing = false;
@@ -126,6 +130,11 @@ int main(int, char**)
 		ImGui::Begin("Properties", nullptr);
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
+		ImGui::SliderInt("Focusing samples per pixel", &focusing_samples_per_pixel, 1, 1000);
+		ImGui::SameLine();
+		if (ImGui::Button("Change"))
+			application->SetFocusingAmount(focusing_samples_per_pixel);
+
 		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
 		ImGui::SameLine();
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);

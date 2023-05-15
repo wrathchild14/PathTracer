@@ -6,7 +6,7 @@
 #include "../Utility/Camera.h"
 #include <vector>
 
-struct Label
+struct ScreenBox
 {
 	int object_class;
 	double x;
@@ -31,7 +31,7 @@ public:
 	double PdfValue(const Point3& o, const Vec3& v) const override;
 	Vec3 Random(const Vec3& o) const override;
 
-	std::vector<Label> GetSphereLabels(const Camera& camera, const int& width, const int& height) const;
+	std::vector<ScreenBox> GetSphereScreenBoxes(const Camera& camera, const int& width, const int& height) const;
 
 private:
 	std::vector<std::shared_ptr<Hittable>> objects_;

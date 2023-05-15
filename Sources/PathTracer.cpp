@@ -36,40 +36,52 @@ int PathTracer::GetImageHeight() const
 	return image_height_;
 }
 
+int PathTracer::GetFocusAmountInLabels(const int i, const int j) const
+{
+	const auto boxes = GetSphereScreenBoxes();
+	for (const auto& box : boxes)
+	{
+		const auto min_x = box.x - box.width;
+		const auto max_x = box.x + box.width;
+
+		const auto max_y = image_height_ - (box.y - box.height);
+		const auto min_y = image_height_ - (box.y + box.height);
+
+		const auto horizontal_side = box.x;
+		const auto vertical_side = image_height_ - box.y;
+		const auto radius = box.width;
+
+		if (min_x < i && i < max_x && min_y < j && j < max_y)
+		{
+			const double distance = std::sqrt(
+				(i - horizontal_side) * (i - horizontal_side) + (j - vertical_side) * (j - vertical_side));
+			if (distance <= radius)
+			{
+				// (i, j) falls within the circle
+				return focused_samples_per_pixel_;
+			}
+		}
+	}
+	return 0;
+}
+
 void PathTracer::Render(const int i, const int j, const int samples_per_pixel, const int depth,
                         const bool is_russian_roulette, const bool is_oren_nayar,
                         const double roughness, const bool focusing) const
 {
 	Color pixel_color(0, 0, 0);
 
+	// sample for increasing the samples per pixel
 	auto samples_per_pixel_final = samples_per_pixel;
-
 	if (focusing)
 	{
-		const auto labels = GetSphereLabels();
-		for (const auto& label : labels)
-		{
-			const auto min_x = label.x - label.width;
-			const auto max_x = label.x + label.width;
-
-			const auto max_y = image_height_ - (label.y - label.height);
-			const auto min_y = image_height_ - (label.y + label.height);
-
-			const auto horizontal_side = label.x;
-			const auto vertical_side = image_height_ - label.y;
-			const auto radius = label.width;
-
-			if (min_x < i && i < max_x && min_y < j && j < max_y)
-			{
-				const double distance = std::sqrt(
-					(i - horizontal_side) * (i - horizontal_side) + (j - vertical_side) * (j - vertical_side));
-				if (distance <= radius)
-				{
-					// (i, j) falls within the circle
-					samples_per_pixel_final = samples_per_pixel + 50;
-				}
-			}
-		}
+		HitRecord test_record;
+		const auto u = (i + RandomDouble()) / (image_width_ - 1);
+		const auto v = (j + RandomDouble()) / (image_height_ - 1);
+		const Ray test_ray = camera_->GetRay(u, v);
+		world_->Hit(test_ray, 0.001, infinity, test_record);
+		if (test_record.is_sphere)
+			samples_per_pixel_final += GetFocusAmountInLabels(i, j);
 	}
 
 	for (int s = 0; s < samples_per_pixel_final; ++s)
@@ -244,7 +256,12 @@ void PathTracer::CleanScene() const
 	AddCornellBoxToWorld();
 }
 
-std::vector<Label> PathTracer::GetSphereLabels() const
+std::vector<ScreenBox> PathTracer::GetSphereScreenBoxes() const
 {
-	return world_->GetSphereLabels(*camera_, image_width_, image_height_);
+	return world_->GetSphereScreenBoxes(*camera_, image_width_, image_height_);
+}
+
+void PathTracer::SetFocusingAmount(const int amount)
+{
+	focused_samples_per_pixel_ = amount;
 }

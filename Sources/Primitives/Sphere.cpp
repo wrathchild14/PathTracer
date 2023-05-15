@@ -25,6 +25,7 @@ bool Sphere::Hit(const Ray& ray, const double t_min, const double t_max, HitReco
 	rec.SetFaceNormal(ray, outward_normal);
 	rec.material = material_;
 	rec.point = std::dynamic_pointer_cast<DiffuseLight>(material_) != nullptr ? ray.At(rec.t) : rec.point;
+	rec.is_sphere = true;
 
 	return true;
 }

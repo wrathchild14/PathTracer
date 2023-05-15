@@ -26,6 +26,7 @@ public:
 	unsigned char* GetImage() const;
 	int GetImageWidth() const;
 	int GetImageHeight() const;
+	int GetFocusAmountInLabels(int i, int j) const;
 
 	void Render(int i, int j, int samples_per_pixel, int depth, bool is_russian_roulette, bool is_oren_nayar,
 	            double roughness, bool focusing) const;
@@ -40,7 +41,9 @@ public:
 	std::shared_ptr<Material> GetRandomLambertMaterial() const;
 	void AddRandomSphereLight() const;
 	void CleanScene() const;
-	std::vector<Label> GetSphereLabels() const;
+	std::vector<ScreenBox> GetSphereScreenBoxes() const;
+
+	void SetFocusingAmount(int amount);
 
 private:
 	unsigned char* image_{};
@@ -51,4 +54,5 @@ private:
 	int image_height_{};
 
 	Color background_ = Color(0.624, 1, 0.996);
+	int focused_samples_per_pixel_ = 100;
 };

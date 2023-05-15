@@ -37,9 +37,9 @@ Vec3 HittableList::Random(const Vec3& o) const
 	return objects_[RandomInt(0, int_size - 1)]->Random(o);
 }
 
-std::vector<Label> HittableList::GetSphereLabels(const Camera& camera, const int& width, const int& height) const
+std::vector<ScreenBox> HittableList::GetSphereScreenBoxes(const Camera& camera, const int& width, const int& height) const
 {
-	std::vector<Label> labels;
+	std::vector<ScreenBox> labels;
 	for (const auto& object : objects_)
 	{
 		std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>(object);
@@ -78,7 +78,7 @@ std::vector<Label> HittableList::GetSphereLabels(const Camera& camera, const int
 			// auto top_left = Vec3(x_min, y_min, 0);
 			// auto bottom_right = Vec3(x_max, y_max, 0);
 
-			Label label{
+			ScreenBox label{
 				1, x, y, half_width * 2.0, half_height * 2.0
 			};
 			labels.push_back(label);
