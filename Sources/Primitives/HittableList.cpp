@@ -78,7 +78,6 @@ std::vector<Label> HittableList::GetSphereLabels(const Camera& camera, const int
 			// auto top_left = Vec3(x_min, y_min, 0);
 			// auto bottom_right = Vec3(x_max, y_max, 0);
 
-
 			Label label{
 				1, x, y, half_width * 2.0, half_height * 2.0
 			};
