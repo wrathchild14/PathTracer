@@ -33,7 +33,7 @@ public:
 	double HitSphere(const Point3& center, double radius, const Ray& r) const;
 	Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	               const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar, const double roughness, const int
-	               samples_per_pixel) const;
+	               samples_per_pixel, bool is_complex_object) const;
 
 	void GenerateRandomImages(int count) const;
 	void AddCornellBoxToWorld() const;
