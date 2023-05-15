@@ -69,8 +69,6 @@ void PathTracer::Render(const int i, const int j, const int samples_per_pixel, c
                         const bool is_russian_roulette, const bool is_oren_nayar,
                         const double roughness, const bool focusing) const
 {
-	Color pixel_color(0, 0, 0);
-
 	// sample for increasing the samples per pixel
 	auto samples_per_pixel_final = samples_per_pixel;
 	if (focusing)
@@ -84,24 +82,25 @@ void PathTracer::Render(const int i, const int j, const int samples_per_pixel, c
 			samples_per_pixel_final += GetFocusAmountInLabels(i, j);
 	}
 
-	for (int s = 0; s < samples_per_pixel_final; ++s)
-	{
-		const auto u = (i + RandomDouble()) / (image_width_ - 1);
-		const auto v = (j + RandomDouble()) / (image_height_ - 1);
-		Ray r = camera_->GetRay(u, v);
+	// for (int s = 0; s < samples_per_pixel_final; ++s)
+	// {
+	const auto u = (i + RandomDouble()) / (image_width_ - 1);
+	const auto v = (j + RandomDouble()) / (image_height_ - 1);
+	const Ray ray = camera_->GetRay(u, v);
 
-		pixel_color += RayColor(r, background_, world_, lights_, depth, is_oren_nayar, roughness);
+	const Color pixel_color = RayColor(ray, background_, world_, lights_, depth, is_oren_nayar, roughness,
+	                                   samples_per_pixel_final);
 
-		if (s > samples_per_pixel * 30 / 100 && is_russian_roulette)
-		{
-			Color pixel = UnitVector(pixel_color);
-			double rr_probability = std::max(pixel.x(), std::max(pixel.y(), pixel.z()));
-			if (rr_probability < 0.1) rr_probability = 0.1;
-			const auto random_double = RandomDouble();
-			if (random_double > rr_probability)
-				break;
-		}
-	}
+	// if (s > samples_per_pixel * 30 / 100 && is_russian_roulette)
+	// {
+	// 	Color pixel = UnitVector(pixel_color);
+	// 	double rr_probability = std::max(pixel.x(), std::max(pixel.y(), pixel.z()));
+	// 	if (rr_probability < 0.1) rr_probability = 0.1;
+	// 	const auto random_double = RandomDouble();
+	// 	if (random_double > rr_probability)
+	// 		break;
+	// }
+	// }
 
 	auto r = pixel_color.x();
 	auto g = pixel_color.y();
@@ -122,29 +121,14 @@ void PathTracer::Render(const int i, const int j, const int samples_per_pixel, c
 	image_[(j * image_width_ + i) * 3 + 2] = static_cast<int>(256 * Clamp(b, 0.0, 0.999));
 }
 
-double PathTracer::HitSphere(const Point3& center, const double radius, const Ray& r) const
-{
-	const Vec3 oc = r.Origin() - center;
-	const auto a = r.Direction().LengthSquared();
-	const auto half_b = Dot(oc, r.Direction());
-	const auto c = oc.LengthSquared() - radius * radius;
-	const auto discriminant = half_b * half_b - a * c;
-
-	if (discriminant < 0)
-	{
-		return -1.0;
-	}
-	return (-half_b - sqrt(discriminant)) / a;
-}
-
 Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
                            const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
-                           const double roughness) const
+                           const double roughness, const int samples_per_pixel) const
 {
 	if (depth <= 0)
 		return {0, 0, 0};
-	HitRecord rec;
 
+	HitRecord rec;
 	if (!world->Hit(ray, 0.001, infinity, rec))
 		return background;
 
@@ -158,21 +142,30 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 			return emitted;
 	}
 
-	if (s_rec.is_specular)
+	Color accumulated_color = {0, 0, 0};
+	for (int i = 0; i < samples_per_pixel; ++i)
 	{
-		return s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights, depth - 1, is_oren_nayar,
-		                                    roughness);
+		if (s_rec.is_specular)
+		{
+			accumulated_color += s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights,
+			                                                  depth - 1, is_oren_nayar, roughness,
+			                                                  samples_per_pixel);
+		}
+		else
+		{
+			const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
+			const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
+			const auto scattered = Ray(rec.point, mixture_pdf.Generate());
+			const auto pdf = mixture_pdf.Value(scattered.Direction());
+
+			accumulated_color += emitted
+				+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
+				* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness,
+				           samples_per_pixel) / pdf;
+		}
 	}
 
-	const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
-	const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
-
-	const auto scattered = Ray(rec.point, mixture_pdf.Generate());
-	const auto pdf = mixture_pdf.Value(scattered.Direction());
-
-	return emitted
-		+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
-		* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness) / pdf;
+	return accumulated_color / samples_per_pixel;
 }
 
 void PathTracer::GenerateRandomImages(const int count) const
