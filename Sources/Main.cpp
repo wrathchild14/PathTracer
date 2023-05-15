@@ -96,6 +96,8 @@ int main(int, char**)
 	int samples_per_pixel = 5;
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
+	bool focusing = false;
+
 	bool is_russian_roulette = false;
 	bool is_oren_nayar = false;
 	float roughness = 0.5f;
@@ -204,6 +206,8 @@ int main(int, char**)
 			}
 		}
 
+		ImGui::Checkbox("Focusing", &focusing);
+
 		ImGui::End();
 
 		if (is_image_rendering)
@@ -211,7 +215,7 @@ int main(int, char**)
 			if (row_counter >= 0)
 			{
 				application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_russian_roulette, is_oren_nayar,
-				                    roughness);
+				                       roughness, focusing);
 				if (row_counter % 10 == 0)
 				{
 					const auto image = application->GetImage();

@@ -33,11 +33,12 @@ int Application::GetImageHeight() const
 }
 
 void Application::RenderRow(const int j, const int samples_per_pixel, const int depth,
-                         const bool is_russian_roulette, const bool is_oren_nayar, const double roughness) const
+                            const bool is_russian_roulette, const bool is_oren_nayar,
+                            const double roughness, const bool focusing) const
 {
 	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
 	{
-		tracer_->Render(i, j, samples_per_pixel, depth, is_russian_roulette, is_oren_nayar, roughness);
+		tracer_->Render(i, j, samples_per_pixel, depth, is_russian_roulette, is_oren_nayar, roughness, focusing);
 	}
 }
 

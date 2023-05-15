@@ -36,26 +36,39 @@ int PathTracer::GetImageHeight() const
 	return image_height_;
 }
 
-void PathTracer::Render(int i, int j, int samples_per_pixel, int depth, bool is_russian_roulette, bool is_oren_nayar,
-                        double roughness) const
+void PathTracer::Render(const int i, const int j, const int samples_per_pixel, const int depth,
+                        const bool is_russian_roulette, const bool is_oren_nayar,
+                        const double roughness, const bool focusing) const
 {
 	Color pixel_color(0, 0, 0);
 
 	auto samples_per_pixel_final = samples_per_pixel;
 
-	const auto labels = GetSphereLabels();
-	for (const auto& label : labels)
+	if (focusing)
 	{
-		const auto min_x = label.x - label.width;
-		const auto max_x = label.x + label.width;
-
-		const auto max_y = image_height_ - (label.y - label.height);
-		const auto min_y = image_height_ - (label.y + label.height);
-
-		if (min_x < i && i < max_x &&
-			min_y < j && j < max_y)
+		const auto labels = GetSphereLabels();
+		for (const auto& label : labels)
 		{
-			samples_per_pixel_final = samples_per_pixel + 25;
+			const auto min_x = label.x - label.width;
+			const auto max_x = label.x + label.width;
+
+			const auto max_y = image_height_ - (label.y - label.height);
+			const auto min_y = image_height_ - (label.y + label.height);
+
+			const auto horizontal_side = label.x;
+			const auto vertical_side = image_height_ - label.y;
+			const auto radius = label.width;
+
+			if (min_x < i && i < max_x && min_y < j && j < max_y)
+			{
+				const double distance = std::sqrt(
+					(i - horizontal_side) * (i - horizontal_side) + (j - vertical_side) * (j - vertical_side));
+				if (distance <= radius)
+				{
+					// (i, j) falls within the circle
+					samples_per_pixel_final = samples_per_pixel + 50;
+				}
+			}
 		}
 	}
 
@@ -150,7 +163,7 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 		* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness) / pdf;
 }
 
-void PathTracer::GenerateRandomImages(int count) const
+void PathTracer::GenerateRandomImages(const int count) const
 {
 	for (int counter = 1 + 60; counter <= count + 60; counter++)
 	{
@@ -163,7 +176,7 @@ void PathTracer::GenerateRandomImages(int count) const
 		// render image
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; i <= this->image_width_; j++)
-				this->Render(i, j, 5, 2, false, false, 0.5);
+				this->Render(i, j, 5, 2, false, false, 0.5, true);
 
 		// save image - absolute path for now... (todo)
 		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";

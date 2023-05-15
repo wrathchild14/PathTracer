@@ -28,7 +28,7 @@ public:
 	int GetImageHeight() const;
 
 	void Render(int i, int j, int samples_per_pixel, int depth, bool is_russian_roulette, bool is_oren_nayar,
-	            double roughness) const;
+	            double roughness, bool focusing) const;
 	double HitSphere(const Point3& center, double radius, const Ray& r) const;
 	Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	               const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar, double roughness) const;

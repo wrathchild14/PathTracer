@@ -65,8 +65,8 @@ std::vector<Label> HittableList::GetSphereLabels(const Camera& camera, const int
 
 			const double half_fov_tan = tan(glm::radians(camera.GetFov() / 2.0));
 			const double half_width = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan * camera.
-				GetAspectRatio();// + 8;
-			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan;// + 8;
+				GetAspectRatio()+ 15;
+			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan + 15;
 
 			const double x = (static_cast<double>(ndc_position.x) + 1.0) * 0.5 * width;
 			const double y = (1.0 - static_cast<double>(ndc_position.y)) * 0.5 * height;
