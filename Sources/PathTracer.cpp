@@ -134,7 +134,7 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 		if (s_rec.is_specular)
 		{
 			accumulated_color += s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights,
-			                                                  depth - 1, is_oren_nayar, roughness);
+			                                                  depth - 1, is_oren_nayar, roughness, samples_per_pixel);
 		}
 		else
 		{
@@ -145,7 +145,7 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 
 			accumulated_color += emitted
 				+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
-				* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness) / pdf;
+				* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness, samples_per_pixel) / pdf;
 		}
 	}
 
