@@ -80,7 +80,7 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 		const Ray test_ray = camera_->GetRay(u, v);
 		if (world_->Hit(test_ray, 0.001, infinity, test_record))
 			if (test_record.is_main) // && IsInScreenBoxes(i, j))
-				samples_per_pixel *= 3;
+				samples_per_pixel *= 10;
 	}
 
 	for (int s = 0; s < samples_per_pixel; ++s)
@@ -182,8 +182,8 @@ void PathTracer::GenerateRandomImages(const int count) const
 
 		// render image
 		for (int i = this->image_height_; i >= 0; i--)
-			for (int j = 0; i <= this->image_width_; j++)
-				this->Render(i, j, 5, 2, false, 0.5, true);
+			for (int j = 0; j <= this->image_width_; j++)
+				this->Render(i, j, 25, 30, false, 0.5, true);
 
 		// save image - absolute path for now... (todo)
 		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";
@@ -214,9 +214,8 @@ void PathTracer::AddCornellBoxToWorld() const
 
 void PathTracer::AddRandomSphere() const
 {
-	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500),
-	                                            RandomInt(0, 500), RandomInt(0, 500)), RandomInt(5, 100),
-	                                     GetRandomMaterial()));
+	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(-300, 500)),
+	                                     RandomInt(5, 100), GetRandomMaterial()));
 }
 
 std::shared_ptr<Material> PathTracer::GetRandomMaterial() const
@@ -239,7 +238,7 @@ void PathTracer::AddRandomSphereLight() const
 	const int intensity = RandomInt(5, 20);
 	const auto light = std::make_shared<DiffuseLight>(Color(intensity, intensity, intensity));
 	const auto random_radius = RandomInt(5, 30);
-	const auto random_point = Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(0, 500));
+	const auto random_point = Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(-200, 500));
 	world_->Add(std::make_shared<FlipFace>(std::make_shared<Sphere>(random_point, random_radius, light)));
 	lights_->Add(std::make_shared<Sphere>(random_point, random_radius));
 }
