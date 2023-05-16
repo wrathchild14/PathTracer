@@ -16,23 +16,27 @@ Features:
 - Russian roulette optimizer
 - Oren-Nayar for roughness and angle of incidence
 
-Improvements:
+### Improvements:
 
-- Positioning of the camera
+- Focused rendering
 - De-noising
-- Clean up code in Application class
 
-## Results
+Some results: (Note: its a WIP, focusing works on choosing the closest sphere)
+
+![](Results/50_100.jpg)
+![](Results/30_100_800.jpg)
+
+- Adding new meshes
+- Faster rendering (parallelization)
+- Positioning of the camera
+
+## Old Results
 
 ### 91 samples, 30 sample depth
 
 Russian roulette
 
 ![Russian roulette result](Results/russianroulette.jpg)
-
-Oren-Nayar with 0.5 roughness
-
-![Oren Nayar result](Results/orennayar.jpg)
 
 Final render with nearly 500 samples per pixel in a 800:800 picture
 
