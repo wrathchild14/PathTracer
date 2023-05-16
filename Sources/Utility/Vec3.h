@@ -174,3 +174,12 @@ inline Vec3 Reflect(const Vec3& d, const Vec3& n)
 {
 	return d - 2 * Dot(d, n) * n;
 }
+
+inline double Distance(const Vec3 point1, const Vec3 point2)
+{
+	const double dx = point1.x() - point2.x();
+	const double dy = point1.y() - point2.y();
+	const double dz = point1.z() - point2.z();
+
+	return std::sqrt(dx * dx + dy * dy + dz * dz);
+}
