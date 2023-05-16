@@ -130,10 +130,7 @@ int main(int, char**)
 		ImGui::Begin("Properties", nullptr);
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
-		ImGui::SliderInt("Focusing samples per pixel", &focusing_samples_per_pixel, 1, 1000);
 		ImGui::SameLine();
-		if (ImGui::Button("Change"))
-			application->SetFocusingAmount(focusing_samples_per_pixel);
 
 		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
 		ImGui::SameLine();

@@ -36,7 +36,7 @@ int PathTracer::GetImageHeight() const
 	return image_height_;
 }
 
-int PathTracer::GetFocusAmountInLabels(const int i, const int j) const
+bool PathTracer::IsInScreenBoxes(const int i, const int j) const
 {
 	const auto boxes = GetSphereScreenBoxes();
 	for (const auto& box : boxes)
@@ -58,21 +58,19 @@ int PathTracer::GetFocusAmountInLabels(const int i, const int j) const
 			if (distance <= radius)
 			{
 				// (i, j) falls within the circle
-				return focused_samples_per_pixel_;
+				return true;
 			}
 		}
 	}
-	return 0;
+	return false;
 }
 
-void PathTracer::Render(const int i, const int j, const int samples_per_pixel, const int depth,
+void PathTracer::Render(const int i, const int j, int samples_per_pixel, const int depth,
                         const bool is_russian_roulette, const bool is_oren_nayar,
                         const double roughness, const bool focusing) const
 {
 	Color pixel_color(0, 0, 0);
 
-	// sample for increasing the samples per pixel
-	auto samples_per_pixel_final = samples_per_pixel;
 	if (focusing)
 	{
 		HitRecord test_record;
@@ -80,11 +78,11 @@ void PathTracer::Render(const int i, const int j, const int samples_per_pixel, c
 		const auto v = (j + RandomDouble()) / (image_height_ - 1);
 		const Ray test_ray = camera_->GetRay(u, v);
 		world_->Hit(test_ray, 0.001, infinity, test_record);
-		if (test_record.is_sphere)
-			samples_per_pixel_final += GetFocusAmountInLabels(i, j);
+		if (test_record.is_sphere && IsInScreenBoxes(i, j))
+			samples_per_pixel *= 2;
 	}
 
-	for (int s = 0; s < samples_per_pixel_final; ++s)
+	for (int s = 0; s < samples_per_pixel; ++s)
 	{
 		const auto u = (i + RandomDouble()) / (image_width_ - 1);
 		const auto v = (j + RandomDouble()) / (image_height_ - 1);
@@ -103,9 +101,9 @@ void PathTracer::Render(const int i, const int j, const int samples_per_pixel, c
 		}
 	}
 
-	auto r = pixel_color.x();
-	auto g = pixel_color.y();
-	auto b = pixel_color.z();
+	auto r = pixel_color.x() / samples_per_pixel;
+	auto g = pixel_color.y() / samples_per_pixel;
+	auto b = pixel_color.z() / samples_per_pixel;
 
 	// Surface acne
 	if (r != r) r = 0.0;
@@ -177,7 +175,7 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 
 void PathTracer::GenerateRandomImages(const int count) const
 {
-	for (int counter = 1 + 60; counter <= count + 60; counter++)
+	for (int counter = 1; counter <= count; counter++)
 	{
 		// clean scene and generate random spheres
 		this->CleanScene();
@@ -259,9 +257,4 @@ void PathTracer::CleanScene() const
 std::vector<ScreenBox> PathTracer::GetSphereScreenBoxes() const
 {
 	return world_->GetSphereScreenBoxes(*camera_, image_width_, image_height_);
-}
-
-void PathTracer::SetFocusingAmount(const int amount)
-{
-	focused_samples_per_pixel_ = amount;
 }

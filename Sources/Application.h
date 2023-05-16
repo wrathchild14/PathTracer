@@ -24,8 +24,6 @@ public:
 	void AddRandomSphereLight() const;
 	void CleanScene() const;
 
-	void SetFocusingAmount(int amount) const;
-
 private:
 	std::unique_ptr<PathTracer> tracer_;
 };

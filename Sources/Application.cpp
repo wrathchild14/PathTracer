@@ -66,8 +66,3 @@ void Application::CleanScene() const
 {
 	tracer_->CleanScene();
 }
-
-void Application::SetFocusingAmount(const int amount) const
-{
-	tracer_->SetFocusingAmount(amount);
-}
