@@ -65,13 +65,17 @@ int PathTracer::GetFocusAmountInLabels(const int i, const int j) const
 	return 0;
 }
 
-void PathTracer::Render(const int i, const int j, const int samples_per_pixel, const int depth,
+void PathTracer::Render(const int i, const int j, int samples_per_pixel, const int depth,
                         const bool is_russian_roulette, const bool is_oren_nayar,
                         const double roughness) const
 {
 	const auto u = (i + RandomDouble()) / (image_width_ - 1);
 	const auto v = (j + RandomDouble()) / (image_height_ - 1);
 	const Ray ray = camera_->GetRay(u, v);
+
+	HitRecord rec;
+	if (world_->Hit(ray, 0.001, infinity, rec))
+		samples_per_pixel = rec.is_main ? samples_per_pixel * 2 : samples_per_pixel;
 
 	const Color pixel_color = RayColor(ray, background_, world_, lights_, depth, is_oren_nayar, roughness,
 	                                   samples_per_pixel);
@@ -127,9 +131,8 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 			return emitted;
 	}
 
-	const int adjusted_samples_per_pixel = rec.is_main ? samples_per_pixel + 2 : samples_per_pixel;
 	Color accumulated_color = {0, 0, 0};
-	for (int i = 0; i < adjusted_samples_per_pixel; ++i)
+	for (int i = 0; i < samples_per_pixel; ++i)
 	{
 		if (s_rec.is_specular)
 		{
@@ -145,11 +148,12 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 
 			accumulated_color += emitted
 				+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
-				* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness, samples_per_pixel) / pdf;
+				* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness,
+				           samples_per_pixel) / pdf;
 		}
 	}
 
-	return accumulated_color / adjusted_samples_per_pixel;
+	return accumulated_color / samples_per_pixel;
 }
 
 
