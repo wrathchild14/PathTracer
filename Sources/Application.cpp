@@ -32,13 +32,12 @@ int Application::GetImageHeight() const
 	return tracer_->GetImageHeight();
 }
 
-void Application::RenderRow(const int j, const int samples_per_pixel, const int depth,
-                            const bool is_russian_roulette, const bool is_oren_nayar,
+void Application::RenderRow(const int j, const int samples_per_pixel, const int depth, const bool is_oren_nayar,
                             const double roughness, const bool focusing) const
 {
 	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
 	{
-		tracer_->Render(i, j, samples_per_pixel, depth, is_russian_roulette, is_oren_nayar, roughness);
+		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing);
 	}
 }
 
@@ -65,11 +64,6 @@ void Application::AddRandomSphereLight() const
 void Application::CleanScene() const
 {
 	tracer_->CleanScene();
-}
-
-void Application::SetFocusingAmount(const int amount) const
-{
-	tracer_->SetFocusingAmount(amount);
 }
 
 void Application::TagClosestObject() const

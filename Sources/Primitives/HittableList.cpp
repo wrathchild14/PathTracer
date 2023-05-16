@@ -40,7 +40,8 @@ void HittableList::TagClosestObject(const Camera& camera) const
 			}
 		}
 	}
-	closest_sphere->IsClosest = true;
+	if (closest_sphere != nullptr)
+		closest_sphere->IsClosest = true;
 }
 
 double HittableList::PdfValue(const Point3& o, const Vec3& v) const

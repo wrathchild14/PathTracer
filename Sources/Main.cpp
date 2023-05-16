@@ -22,6 +22,7 @@
 #ifdef __EMSCRIPTEN__
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
+
 #include "Application.h"
 
 static void glfw_error_callback(int error, const char* description)
@@ -94,14 +95,12 @@ int main(int, char**)
 	application->SetWidth(400);
 	int width = application->GetImageWidth();
 	int height = application->GetImageHeight();
-	int sample_depth = 5;
-	int samples_per_pixel = 1;
-	int focusing_samples_per_pixel = 100;
+	int sample_depth = 50;
+	int samples_per_pixel = 25;
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
-	bool focusing = false;
+	bool focusing = true;
 
-	bool is_russian_roulette = false;
 	bool is_oren_nayar = false;
 	float roughness = 0.5f;
 	int number_g_images = 5;
@@ -128,18 +127,14 @@ int main(int, char**)
 
 		ImGui::Begin("Properties", nullptr);
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
-		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 100);
-		ImGui::SliderInt("Focusing samples per pixel", &focusing_samples_per_pixel, 1, 100);
+		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
 		ImGui::SameLine();
-		if (ImGui::Button("Change"))
-			application->SetFocusingAmount(focusing_samples_per_pixel);
-
-		ImGui::Checkbox("Russian roulette", &is_russian_roulette);
 		ImGui::SameLine();
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
 		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
 		if (ImGui::Button("Render"))
 		{
+			application->TagClosestObject();
 			row_counter = height - 1;
 			is_image_rendering = true;
 		}
@@ -219,14 +214,16 @@ int main(int, char**)
 			application->TagClosestObject();
 		}
 
+		ImGui::Checkbox("Focusing", &focusing);
+
 		ImGui::End();
 
 		if (is_image_rendering)
 		{
 			if (row_counter >= 0)
 			{
-				application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_russian_roulette, is_oren_nayar,
-				                       roughness, focusing);
+				application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_oren_nayar, roughness,
+				                       focusing);
 				if (row_counter % 10 == 0)
 				{
 					const auto image = application->GetImage();
