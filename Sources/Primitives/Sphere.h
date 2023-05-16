@@ -25,6 +25,8 @@ public:
 	Point3 GetCenter() const;
 	double GetRadius() const;
 
+	bool IsClosest = false;
+
 private:
 	Vec3 RandomToSphere(double radius, double distance_squared) const;
 

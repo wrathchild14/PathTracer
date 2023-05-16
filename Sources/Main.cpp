@@ -94,8 +94,8 @@ int main(int, char**)
 	application->SetWidth(400);
 	int width = application->GetImageWidth();
 	int height = application->GetImageHeight();
-	int sample_depth = 8;
-	int samples_per_pixel = 2;
+	int sample_depth = 5;
+	int samples_per_pixel = 1;
 	int focusing_samples_per_pixel = 100;
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
@@ -214,7 +214,10 @@ int main(int, char**)
 			}
 		}
 
-		ImGui::Checkbox("Focusing", &focusing);
+		if (ImGui::Button("Tag closest"))
+		{
+			application->TagClosestObject();
+		}
 
 		ImGui::End();
 

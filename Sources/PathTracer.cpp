@@ -67,31 +67,14 @@ int PathTracer::GetFocusAmountInLabels(const int i, const int j) const
 
 void PathTracer::Render(const int i, const int j, const int samples_per_pixel, const int depth,
                         const bool is_russian_roulette, const bool is_oren_nayar,
-                        const double roughness, const bool focusing) const
+                        const double roughness) const
 {
-	// sample for increasing the samples per pixel
-	auto samples_per_pixel_final = samples_per_pixel;
-	auto is_complex_object = false;
-	if (focusing)
-	{
-		HitRecord test_record;
-		const auto u = (i + RandomDouble()) / (image_width_ - 1);
-		const auto v = (j + RandomDouble()) / (image_height_ - 1);
-		const Ray test_ray = camera_->GetRay(u, v);
-		world_->Hit(test_ray, 0.001, infinity, test_record);
-		if (test_record.is_sphere)
-			is_complex_object = true;
-			// samples_per_pixel_final += GetFocusAmountInLabels(i, j);
-	}
-
-	// for (int s = 0; s < samples_per_pixel_final; ++s)
-	// {
 	const auto u = (i + RandomDouble()) / (image_width_ - 1);
 	const auto v = (j + RandomDouble()) / (image_height_ - 1);
 	const Ray ray = camera_->GetRay(u, v);
 
 	const Color pixel_color = RayColor(ray, background_, world_, lights_, depth, is_oren_nayar, roughness,
-	                                   samples_per_pixel_final, is_complex_object);
+	                                   samples_per_pixel);
 
 	// if (s > samples_per_pixel * 30 / 100 && is_russian_roulette)
 	// {
@@ -125,58 +108,54 @@ void PathTracer::Render(const int i, const int j, const int samples_per_pixel, c
 
 Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
                            const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
-                           const double roughness, const int samples_per_pixel, bool is_complex_object) const
+                           const double roughness, const int samples_per_pixel) const
 {
-    if (depth <= 0)
-        return {0, 0, 0};
+	if (depth <= 0)
+		return {0, 0, 0};
 
-    HitRecord rec;
-    if (!world->Hit(ray, 0.001, infinity, rec))
-        return background;
+	HitRecord rec;
+	if (!world->Hit(ray, 0.001, infinity, rec))
+		return background;
 
-    ScatterRecord s_rec;
-    Color emitted;
-    if (rec.material != nullptr)
-    {
-        emitted = rec.material->Emitted(ray, rec, rec.point);
+	ScatterRecord s_rec;
+	Color emitted;
+	if (rec.material != nullptr)
+	{
+		emitted = rec.material->Emitted(ray, rec, rec.point);
 
-        if (!rec.material->Scatter(ray, rec, s_rec, is_oren_nayar, roughness))
-            return emitted;
-    }
+		if (!rec.material->Scatter(ray, rec, s_rec, is_oren_nayar, roughness))
+			return emitted;
+	}
 
-    const int adjusted_samples_per_pixel = is_complex_object ? samples_per_pixel * 2 : samples_per_pixel;
-	is_complex_object = false; // temp: fixes infinite loop
+	const int adjusted_samples_per_pixel = rec.is_main ? samples_per_pixel + 2 : samples_per_pixel;
+	Color accumulated_color = {0, 0, 0};
+	for (int i = 0; i < adjusted_samples_per_pixel; ++i)
+	{
+		if (s_rec.is_specular)
+		{
+			accumulated_color += s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights,
+			                                                  depth - 1, is_oren_nayar, roughness);
+		}
+		else
+		{
+			const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
+			const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
+			const auto scattered = Ray(rec.point, mixture_pdf.Generate());
+			const auto pdf = mixture_pdf.Value(scattered.Direction());
 
-    Color accumulated_color = {0, 0, 0};
-    for (int i = 0; i < adjusted_samples_per_pixel; ++i)
-    {
-        if (s_rec.is_specular)
-        {
-            accumulated_color += s_rec.attenuation * RayColor(s_rec.specular_ray, background, world, lights,
-                                                              depth - 1, is_oren_nayar, roughness,
-                                                              adjusted_samples_per_pixel, is_complex_object);
-        }
-        else
-        {
-            const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
-            const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
-            const auto scattered = Ray(rec.point, mixture_pdf.Generate());
-            const auto pdf = mixture_pdf.Value(scattered.Direction());
+			accumulated_color += emitted
+				+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
+				* RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness) / pdf;
+		}
+	}
 
-            accumulated_color += emitted
-                + s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
-                * RayColor(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness,
-                           adjusted_samples_per_pixel, is_complex_object) / pdf;
-        }
-    }
-
-    return accumulated_color / adjusted_samples_per_pixel;
+	return accumulated_color / adjusted_samples_per_pixel;
 }
 
 
 void PathTracer::GenerateRandomImages(const int count) const
 {
-	for (int counter = 1 + 60; counter <= count + 60; counter++)
+	for (int counter = 1; counter <= count; counter++)
 	{
 		// clean scene and generate random spheres
 		this->CleanScene();
@@ -187,7 +166,7 @@ void PathTracer::GenerateRandomImages(const int count) const
 		// render image
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; i <= this->image_width_; j++)
-				this->Render(i, j, 5, 2, false, false, 0.5, true);
+				this->Render(i, j, 5, 2, false, false, 0.5);
 
 		// save image - absolute path for now... (todo)
 		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";
@@ -263,4 +242,9 @@ std::vector<ScreenBox> PathTracer::GetSphereScreenBoxes() const
 void PathTracer::SetFocusingAmount(const int amount)
 {
 	focused_samples_per_pixel_ = amount;
+}
+
+void PathTracer::TagClosestObject() const
+{
+	world_->TagClosestObject(*camera_);
 }

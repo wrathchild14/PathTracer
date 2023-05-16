@@ -20,6 +20,29 @@ bool HittableList::Hit(const Ray& ray, const double t_min, const double t_max, H
 	return hit_anything;
 }
 
+void HittableList::TagClosestObject(const Camera& camera) const
+{
+	std::shared_ptr<Sphere> closest_sphere;
+	auto closest_distance = std::numeric_limits<double>::max();
+	const auto camera_pos = camera.GetPosition();
+	for (const auto& object : objects_)
+	{
+		std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>(object);
+		if (sphere)
+		{
+			sphere->IsClosest = false; // reset first
+			const auto sphere_center = sphere->GetCenter();
+			const auto distance = Distance(camera_pos, sphere_center);
+			if (distance < closest_distance)
+			{
+				closest_distance = distance;
+				closest_sphere = sphere;
+			}
+		}
+	}
+	closest_sphere->IsClosest = true;
+}
+
 double HittableList::PdfValue(const Point3& o, const Vec3& v) const
 {
 	const auto weight = 1.0 / objects_.size();
@@ -37,7 +60,8 @@ Vec3 HittableList::Random(const Vec3& o) const
 	return objects_[RandomInt(0, int_size - 1)]->Random(o);
 }
 
-std::vector<ScreenBox> HittableList::GetSphereScreenBoxes(const Camera& camera, const int& width, const int& height) const
+std::vector<ScreenBox> HittableList::GetSphereScreenBoxes(const Camera& camera, const int& width,
+                                                          const int& height) const
 {
 	std::vector<ScreenBox> labels;
 	for (const auto& object : objects_)
@@ -65,7 +89,7 @@ std::vector<ScreenBox> HittableList::GetSphereScreenBoxes(const Camera& camera, 
 
 			const double half_fov_tan = tan(glm::radians(camera.GetFov() / 2.0));
 			const double half_width = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan * camera.
-				GetAspectRatio()+ 15;
+				GetAspectRatio() + 15;
 			const double half_height = sphere_radius * static_cast<double>(ndc_position.z) * half_fov_tan + 15;
 
 			const double x = (static_cast<double>(ndc_position.x) + 1.0) * 0.5 * width;

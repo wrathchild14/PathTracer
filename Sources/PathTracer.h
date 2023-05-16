@@ -28,12 +28,13 @@ public:
 	int GetImageHeight() const;
 	int GetFocusAmountInLabels(int i, int j) const;
 
-	void Render(int i, int j, int samples_per_pixel, int depth, bool is_russian_roulette, bool is_oren_nayar,
-	            double roughness, bool focusing) const;
+	void Render(const int i, const int j, const int samples_per_pixel, const int depth, const bool is_russian_roulette, const bool
+	            is_oren_nayar,
+	            const double roughness) const;
 	double HitSphere(const Point3& center, double radius, const Ray& r) const;
 	Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	               const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar, const double roughness, const int
-	               samples_per_pixel, bool is_complex_object) const;
+	               samples_per_pixel) const;
 
 	void GenerateRandomImages(int count) const;
 	void AddCornellBoxToWorld() const;
@@ -45,6 +46,7 @@ public:
 	std::vector<ScreenBox> GetSphereScreenBoxes() const;
 
 	void SetFocusingAmount(int amount);
+	void TagClosestObject() const;
 
 private:
 	unsigned char* image_{};

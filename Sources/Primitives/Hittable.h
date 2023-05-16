@@ -15,7 +15,7 @@ struct HitRecord
 		front_face = Dot(ray.Direction(), outward_normal) < 0;
 		normal = front_face ? outward_normal : -outward_normal;
 	}
-	bool is_sphere = false;
+	bool is_main = false;
 };
 
 class Hittable

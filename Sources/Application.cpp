@@ -38,7 +38,7 @@ void Application::RenderRow(const int j, const int samples_per_pixel, const int 
 {
 	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
 	{
-		tracer_->Render(i, j, samples_per_pixel, depth, is_russian_roulette, is_oren_nayar, roughness, focusing);
+		tracer_->Render(i, j, samples_per_pixel, depth, is_russian_roulette, is_oren_nayar, roughness);
 	}
 }
 
@@ -70,4 +70,9 @@ void Application::CleanScene() const
 void Application::SetFocusingAmount(const int amount) const
 {
 	tracer_->SetFocusingAmount(amount);
+}
+
+void Application::TagClosestObject() const
+{
+	tracer_->TagClosestObject();
 }

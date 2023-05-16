@@ -25,6 +25,7 @@ public:
 	void CleanScene() const;
 
 	void SetFocusingAmount(int amount) const;
+	void TagClosestObject() const;
 
 private:
 	std::unique_ptr<PathTracer> tracer_;
