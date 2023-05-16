@@ -69,8 +69,6 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
                         const bool is_russian_roulette, const bool is_oren_nayar,
                         const double roughness, const bool focusing) const
 {
-	Color pixel_color(0, 0, 0);
-
 	if (focusing)
 	{
 		HitRecord test_record;
@@ -82,6 +80,7 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 			samples_per_pixel *= 2;
 	}
 
+	Color pixel_color(0, 0, 0);
 	for (int s = 0; s < samples_per_pixel; ++s)
 	{
 		const auto u = (i + RandomDouble()) / (image_width_ - 1);
@@ -100,10 +99,10 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 				break;
 		}
 	}
-
-	auto r = pixel_color.x() / samples_per_pixel;
-	auto g = pixel_color.y() / samples_per_pixel;
-	auto b = pixel_color.z() / samples_per_pixel;
+	pixel_color /= samples_per_pixel;
+	auto r = pixel_color.x();
+	auto g = pixel_color.y();
+	auto b = pixel_color.z();
 
 	// Surface acne
 	if (r != r) r = 0.0;
