@@ -34,6 +34,8 @@ void FocusingSamplesPerPixelChanged(int* value);
 
 int main(int, char**)
 {
+	srand(time(nullptr));
+	
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit())
 		return 1;

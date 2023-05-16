@@ -38,7 +38,7 @@ void Application::RenderRow(const int j, const int samples_per_pixel, const int 
 {
 	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
 	{
-		tracer_->Render(i, j, samples_per_pixel, depth, is_russian_roulette, is_oren_nayar, roughness, focusing);
+		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing);
 	}
 }
 
