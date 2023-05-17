@@ -30,6 +30,10 @@ public:
 
 	void Render(int i, int j, int samples_per_pixel, int depth, bool is_oren_nayar,
 	            double roughness, bool focusing) const;
+	Color RayColorImportanceSampling(const Ray& ray, const Color& background,
+	                                 const std::shared_ptr<HittableList>& world,
+	                                 const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar,
+	                                 double roughness, int samples_per_pixel) const;
 	Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	               const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar, double roughness) const;
 

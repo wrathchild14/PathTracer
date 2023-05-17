@@ -106,6 +106,53 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 	image_[(j * image_width_ + i) * 3 + 2] = static_cast<int>(256 * b);
 }
 
+Color PathTracer::RayColorImportanceSampling(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
+						   const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
+						   const double roughness, const int samples_per_pixel) const
+{
+	if (depth <= 0)
+		return {0, 0, 0};
+
+	HitRecord rec;
+	if (!world->Hit(ray, 0.001, infinity, rec))
+		return background;
+
+	ScatterRecord s_rec;
+	Color emitted;
+	if (rec.material != nullptr)
+	{
+		emitted = rec.material->Emitted(ray, rec, rec.point);
+
+		if (!rec.material->Scatter(ray, rec, s_rec, is_oren_nayar, roughness))
+			return emitted;
+	}
+
+	Color accumulated_color = {0, 0, 0};
+	for (int i = 0; i < samples_per_pixel; ++i)
+	{
+		if (s_rec.is_specular)
+		{
+			accumulated_color += s_rec.attenuation * RayColorImportanceSampling(s_rec.specular_ray, background, world, lights,
+															  depth - 1, is_oren_nayar, roughness,
+															  samples_per_pixel);
+		}
+		else
+		{
+			const auto light_ptr = std::make_shared<HittablePdf>(lights, rec.point);
+			const MixturePdf mixture_pdf(light_ptr, s_rec.pdf);
+			const auto scattered = Ray(rec.point, mixture_pdf.Generate());
+			const auto pdf = mixture_pdf.Value(scattered.Direction());
+
+			accumulated_color += emitted
+				+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
+				* RayColorImportanceSampling(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness,
+						   samples_per_pixel) / pdf;
+		}
+	}
+
+	return accumulated_color / samples_per_pixel;
+}
+
 Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
                            const std::shared_ptr<Hittable>& lights, int depth, const bool is_oren_nayar,
                            const double roughness) const
