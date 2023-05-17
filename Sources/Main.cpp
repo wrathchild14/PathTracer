@@ -132,9 +132,8 @@ int main(int, char**)
 		ImGui::DockSpaceOverViewport();
 
 		ImGui::Begin("Properties", nullptr);
-		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
-		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
-		ImGui::SameLine();
+		ImGui::SliderInt("Sample depth", &sample_depth, 1, 60);
+		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 300);
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
 		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
 		if (ImGui::Button("Render"))

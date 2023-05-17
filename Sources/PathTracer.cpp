@@ -247,13 +247,13 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 #pragma omp parallel for schedule(dynamic)
 			for (int i = this->image_height_; i >= 0; i--)
 				for (int j = 0; j <= this->image_width_; j++)
-					this->Render(i, j, 25, 30, false, 0.5, true, 3, false);
+					this->Render(i, j, 50, 30, false, 0.5, true, 4, false);
 		}
 		else
 		{
 			for (int i = this->image_height_; i >= 0; i--)
 				for (int j = 0; j <= this->image_width_; j++)
-					this->Render(i, j, 25, 30, false, 0.5, true, 3, false);
+					this->Render(i, j, 50, 30, false, 0.5, true, 4, false);
 		}
 
 		// save image - absolute path for now... (todo)
