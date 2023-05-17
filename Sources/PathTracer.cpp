@@ -231,7 +231,7 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 	return accumulated_color;
 }
 
-void PathTracer::GenerateRandomImages(const int count) const
+void PathTracer::GenerateRandomImages(const int count, const bool parallel) const
 {
 	for (int counter = 1; counter <= count; counter++)
 	{
@@ -242,9 +242,17 @@ void PathTracer::GenerateRandomImages(const int count) const
 			this->AddRandomSphere();
 
 		// render image
-		for (int i = this->image_height_; i >= 0; i--)
-			for (int j = 0; j <= this->image_width_; j++)
-				this->Render(i, j, 25, 30, false, 0.5, true, false);
+		if (parallel) {
+			#pragma omp parallel for schedule(dynamic)
+			for (int i = this->image_height_; i >= 0; i--)
+				for (int j = 0; j <= this->image_width_; j++)
+					this->Render(i, j, 25, 30, false, 0.5, true, false);
+		} else
+		{
+			for (int i = this->image_height_; i >= 0; i--)
+				for (int j = 0; j <= this->image_width_; j++)
+					this->Render(i, j, 25, 30, false, 0.5, true, false);
+		}
 
 		// save image - absolute path for now... (todo)
 		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";

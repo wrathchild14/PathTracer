@@ -51,9 +51,9 @@ void Application::RenderRow(const int j, const int samples_per_pixel, const int 
 	}
 }
 
-void Application::GenerateRandomImages(const int count) const
+void Application::GenerateRandomImages(const int count, const bool parallel) const
 {
-	tracer_->GenerateRandomImages(count);
+	tracer_->GenerateRandomImages(count, parallel);
 }
 
 std::vector<ScreenBox> Application::GetLabels() const

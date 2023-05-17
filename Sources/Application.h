@@ -18,7 +18,7 @@ public:
 	int GetImageWidth() const;
 	int GetImageHeight() const;
 
-	void GenerateRandomImages(int count) const;
+	void GenerateRandomImages(const int count, const bool parallel) const;
 	std::vector<ScreenBox> GetLabels() const;
 
 	void AddRandomSphere() const;

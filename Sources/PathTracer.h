@@ -37,7 +37,7 @@ public:
 	Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	               const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar, double roughness) const;
 
-	void GenerateRandomImages(int count) const;
+	void GenerateRandomImages(const int count, const bool parallel) const;
 	void AddCornellBoxToWorld() const;
 	void AddRandomSphere() const;
 	std::shared_ptr<Material> GetRandomMaterial() const;

@@ -211,7 +211,7 @@ int main(int, char**)
 		ImGui::Text("Image generation settings");
 		ImGui::InputInt("#images", &number_g_images);
 		if (ImGui::Button("Generate"))
-			application->GenerateRandomImages(number_g_images);
+			application->GenerateRandomImages(number_g_images, multi_processing);
 
 		if (ImGui::Button("Print labels"))
 		{
