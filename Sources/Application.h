@@ -9,7 +9,8 @@ public:
 	Application(int width, double aspect_ratio);
 	void SetWidth(int width) const;
 
-	void RenderRow(int j, int samples_per_pixel, int depth, bool is_oren_nayar, double roughness, bool focusing) const;
+	void RenderRow(const int j, const int samples_per_pixel, const int depth, const bool is_oren_nayar, const double roughness, const bool
+	               focusing, const bool importance_sampling) const;
 	unsigned char* GetImage() const;
 
 	int GetImageWidth() const;

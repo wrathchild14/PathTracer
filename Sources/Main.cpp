@@ -100,6 +100,7 @@ int main(int, char**)
 	int row_counter = height - 1;
 	bool is_image_rendering = false;
 	bool focusing = true;
+	bool importance_sampling = false;
 
 	bool is_oren_nayar = false;
 	float roughness = 0.5f;
@@ -215,6 +216,7 @@ int main(int, char**)
 		}
 
 		ImGui::Checkbox("Focusing", &focusing);
+		ImGui::Checkbox("Importance sampling", &importance_sampling);
 
 		ImGui::End();
 
@@ -223,7 +225,7 @@ int main(int, char**)
 			if (row_counter >= 0)
 			{
 				application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_oren_nayar, roughness,
-				                       focusing);
+				                       focusing, importance_sampling);
 				if (row_counter % 10 == 0)
 				{
 					const auto image = application->GetImage();

@@ -66,7 +66,8 @@ bool PathTracer::IsInScreenBoxes(const int i, const int j) const
 }
 
 void PathTracer::Render(const int i, const int j, int samples_per_pixel, const int depth,
-                        const bool is_oren_nayar, const double roughness, const bool focusing) const
+                        const bool is_oren_nayar, const double roughness, const bool focusing,
+                        const bool importance_sampling) const
 {
 	Color pixel_color(0, 0, 0);
 	const auto inv_samples_per_pixel = 1.0 / samples_per_pixel;
@@ -80,18 +81,28 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 		const Ray test_ray = camera_->GetRay(u, v);
 		if (world_->Hit(test_ray, 0.001, infinity, test_record))
 			if (test_record.is_main) // && IsInScreenBoxes(i, j))
-				samples_per_pixel *= 10;
+				samples_per_pixel *= 2;
 	}
 
-	for (int s = 0; s < samples_per_pixel; ++s)
+	if (importance_sampling)
 	{
 		const auto u = (i + RandomDouble()) / (image_width_ - 1);
 		const auto v = (j + RandomDouble()) / (image_height_ - 1);
-		Ray r = camera_->GetRay(u, v);
-		pixel_color += RayColor(r, background_, world_, lights_, depth, is_oren_nayar, roughness);
+		Ray ray = camera_->GetRay(u, v);
+		pixel_color += RayColorImportanceSampling(ray, background_, world_, lights_, depth, is_oren_nayar, roughness,
+		                                          samples_per_pixel);
 	}
-
-	pixel_color /= samples_per_pixel;
+	else
+	{
+		for (int s = 0; s < samples_per_pixel; ++s)
+		{
+			const auto u = (i + RandomDouble()) / (image_width_ - 1);
+			const auto v = (j + RandomDouble()) / (image_height_ - 1);
+			Ray r = camera_->GetRay(u, v);
+			pixel_color += RayColor(r, background_, world_, lights_, depth, is_oren_nayar, roughness);
+		}
+		pixel_color /= samples_per_pixel;
+	}
 	pixel_color *= scale;
 
 	// Surface acne
@@ -106,9 +117,11 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 	image_[(j * image_width_ + i) * 3 + 2] = static_cast<int>(256 * b);
 }
 
-Color PathTracer::RayColorImportanceSampling(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
-						   const std::shared_ptr<Hittable>& lights, const int depth, const bool is_oren_nayar,
-						   const double roughness, const int samples_per_pixel) const
+Color PathTracer::RayColorImportanceSampling(const Ray& ray, const Color& background,
+                                             const std::shared_ptr<HittableList>& world,
+                                             const std::shared_ptr<Hittable>& lights, const int depth,
+                                             const bool is_oren_nayar,
+                                             const double roughness, const int samples_per_pixel) const
 {
 	if (depth <= 0)
 		return {0, 0, 0};
@@ -132,9 +145,10 @@ Color PathTracer::RayColorImportanceSampling(const Ray& ray, const Color& backgr
 	{
 		if (s_rec.is_specular)
 		{
-			accumulated_color += s_rec.attenuation * RayColorImportanceSampling(s_rec.specular_ray, background, world, lights,
-															  depth - 1, is_oren_nayar, roughness,
-															  samples_per_pixel);
+			accumulated_color += s_rec.attenuation * RayColorImportanceSampling(
+				s_rec.specular_ray, background, world, lights,
+				depth - 1, is_oren_nayar, roughness,
+				samples_per_pixel);
 		}
 		else
 		{
@@ -146,7 +160,7 @@ Color PathTracer::RayColorImportanceSampling(const Ray& ray, const Color& backgr
 			accumulated_color += emitted
 				+ s_rec.attenuation * rec.material->ScatteringPdf(ray, rec, scattered)
 				* RayColorImportanceSampling(scattered, background, world, lights, depth - 1, is_oren_nayar, roughness,
-						   samples_per_pixel) / pdf;
+				                             samples_per_pixel) / pdf;
 		}
 	}
 
@@ -230,7 +244,7 @@ void PathTracer::GenerateRandomImages(const int count) const
 		// render image
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; j <= this->image_width_; j++)
-				this->Render(i, j, 25, 30, false, 0.5, true);
+				this->Render(i, j, 25, 30, false, 0.5, true, false);
 
 		// save image - absolute path for now... (todo)
 		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";
