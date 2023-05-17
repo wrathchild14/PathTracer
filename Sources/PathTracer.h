@@ -49,7 +49,7 @@ public:
 	void TagClosestObject() const;
 
 private:
-	unsigned char* image_{};
+	uint8_t* image_;
 	Camera* camera_{};
 	std::shared_ptr<HittableList> world_;
 	std::shared_ptr<HittableList> lights_;

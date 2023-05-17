@@ -14,7 +14,7 @@ void PathTracer::SetImageWidth(const int width)
 	image_width_ = width;
 	image_height_ = static_cast<int>(width);
 	delete[] image_;
-	image_ = new std::uint8_t[image_height_ * image_width_ * 3];
+	image_ = new uint8_t[image_height_ * image_width_ * 3];
 }
 
 unsigned char* PathTracer::GetImage() const
