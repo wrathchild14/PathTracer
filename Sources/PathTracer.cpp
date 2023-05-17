@@ -67,7 +67,7 @@ bool PathTracer::IsInScreenBoxes(const int i, const int j) const
 
 void PathTracer::Render(const int i, const int j, int samples_per_pixel, const int depth,
                         const bool is_oren_nayar, const double roughness, const bool focusing,
-                        const bool importance_sampling) const
+                        const int focus_multiplier, const bool importance_sampling) const
 {
 	Color pixel_color(0, 0, 0);
 	const auto inv_samples_per_pixel = 1.0 / samples_per_pixel;
@@ -81,7 +81,7 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 		const Ray test_ray = camera_->GetRay(u, v);
 		if (world_->Hit(test_ray, 0.001, infinity, test_record))
 			if (test_record.is_main) // && IsInScreenBoxes(i, j))
-				samples_per_pixel *= 2;
+				samples_per_pixel *= focus_multiplier;
 	}
 
 	if (importance_sampling)
@@ -247,13 +247,13 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 #pragma omp parallel for schedule(dynamic)
 			for (int i = this->image_height_; i >= 0; i--)
 				for (int j = 0; j <= this->image_width_; j++)
-					this->Render(i, j, 25, 30, false, 0.5, true, false);
+					this->Render(i, j, 25, 30, false, 0.5, true, 3, false);
 		}
 		else
 		{
 			for (int i = this->image_height_; i >= 0; i--)
 				for (int j = 0; j <= this->image_width_; j++)
-					this->Render(i, j, 25, 30, false, 0.5, true, false);
+					this->Render(i, j, 25, 30, false, 0.5, true, 3, false);
 		}
 
 		// save image - absolute path for now... (todo)

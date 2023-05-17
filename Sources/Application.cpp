@@ -33,21 +33,25 @@ int Application::GetImageHeight() const
 }
 
 void Application::RenderRowMp(const int j, const int samples_per_pixel, const int depth, const bool is_oren_nayar,
-                              const double roughness, const bool focusing, const bool importance_sampling) const
+                              const double roughness, const bool focusing, const int focus_multiplier,
+                              const bool importance_sampling) const
 {
-	#pragma omp parallel for
+#pragma omp parallel for
 	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
 	{
-		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing, importance_sampling);
+		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing, focus_multiplier,
+		                importance_sampling);
 	}
 }
 
 void Application::RenderRow(const int j, const int samples_per_pixel, const int depth, const bool is_oren_nayar,
-                            const double roughness, const bool focusing, const bool importance_sampling) const
+                            const double roughness, const bool focusing, const int focus_multiplier,
+                            const bool importance_sampling) const
 {
 	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
 	{
-		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing, importance_sampling);
+		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing, focus_multiplier,
+		                importance_sampling);
 	}
 }
 

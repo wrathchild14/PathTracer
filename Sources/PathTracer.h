@@ -29,7 +29,7 @@ public:
 	bool IsInScreenBoxes(int i, int j) const;
 
 	void Render(const int i, const int j, int samples_per_pixel, const int depth, const bool is_oren_nayar,
-	            const double roughness, const bool focusing, const bool importance_sampling) const;
+	            const double roughness, const bool focusing, const int focus_multiplier, const bool importance_sampling) const;
 	Color RayColorImportanceSampling(const Ray& ray, const Color& background,
 	                                 const std::shared_ptr<HittableList>& world,
 	                                 const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar,

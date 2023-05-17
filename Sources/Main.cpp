@@ -99,17 +99,18 @@ int main(int, char**)
 	int sample_depth = 50;
 	int samples_per_pixel = 25;
 	int row_counter = height - 1;
+	int focus_multiplier = 2;
 
 	bool multi_processing = false;
 	bool should_image_render = false;
 	bool focusing = true;
 	bool importance_sampling = false;
 	bool is_oren_nayar = false;
-	
+
 	float roughness = 0.5;
 	int number_g_images = 5;
 	double render_start_time;
-	
+
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
@@ -154,6 +155,8 @@ int main(int, char**)
 		ImGui::Checkbox("Focusing", &focusing);
 		ImGui::SameLine();
 		ImGui::Checkbox("Importance sampling", &importance_sampling);
+
+		ImGui::SliderInt("Focus multiplier", &focus_multiplier, 1, 25);
 
 		ImGui::Text("Image settings");
 		if (ImGui::Button("200 width"))
@@ -236,11 +239,12 @@ int main(int, char**)
 
 			if (multi_processing)
 			{
-				#pragma omp parallel for
+#pragma omp parallel for
 				for (int i = row_counter; i >= 0; i--)
 				{
 					application->RenderRowMp(i, samples_per_pixel, sample_depth, is_oren_nayar, roughness, focusing,
-					                         importance_sampling);
+					                         focus_multiplier, importance_sampling
+					);
 				}
 				const auto image = application->GetImage();
 				if (image != nullptr)
@@ -255,7 +259,7 @@ int main(int, char**)
 				if (row_counter >= 0)
 				{
 					application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_oren_nayar, roughness,
-					                       focusing, importance_sampling);
+					                       focusing, focus_multiplier, importance_sampling);
 					if (row_counter % 10 == 0)
 					{
 						const auto image = application->GetImage();
