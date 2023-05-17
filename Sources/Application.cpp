@@ -2,13 +2,13 @@
 
 Application::Application()
 {
-	auto* image = new std::uint8_t[400 * 400 * 3];
+	auto* image = new uint8_t[400 * 400 * 3];
 	tracer_ = std::make_unique<PathTracer>(image, 1.0);
 }
 
 Application::Application(const int width, const double aspect_ratio)
 {
-	auto* image = new std::uint8_t[width * width * 3];
+	auto* image = new uint8_t[width * width * 3];
 	tracer_ = std::make_unique<PathTracer>(image, aspect_ratio);
 }
 
@@ -17,7 +17,7 @@ void Application::SetWidth(const int width) const
 	tracer_->SetImageWidth(width);
 }
 
-std::uint8_t* Application::GetImage() const
+uint8_t* Application::GetImage() const
 {
 	return tracer_->GetImage();
 }
@@ -30,6 +30,16 @@ int Application::GetImageWidth() const
 int Application::GetImageHeight() const
 {
 	return tracer_->GetImageHeight();
+}
+
+void Application::RenderRowMp(const int j, const int samples_per_pixel, const int depth, const bool is_oren_nayar,
+                              const double roughness, const bool focusing, const bool importance_sampling) const
+{
+	#pragma omp parallel for
+	for (int i = 0; i < tracer_->GetImageWidth(); ++i)
+	{
+		tracer_->Render(i, j, samples_per_pixel, depth, is_oren_nayar, roughness, focusing, importance_sampling);
+	}
 }
 
 void Application::RenderRow(const int j, const int samples_per_pixel, const int depth, const bool is_oren_nayar,

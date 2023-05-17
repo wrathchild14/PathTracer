@@ -10,6 +10,7 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <tinyfiledialogs.h>
+#include <omp.h>
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to maximize ease of testing and compatibility with old VS compilers.
 // To link with VS2010-era libraries, VS2015+ requires linking with legacy_stdio_definitions.lib, which we do using this pragma.
@@ -98,14 +99,17 @@ int main(int, char**)
 	int sample_depth = 50;
 	int samples_per_pixel = 25;
 	int row_counter = height - 1;
-	bool is_image_rendering = false;
+
+	bool multi_processing = true;
+	bool should_image_render = false;
 	bool focusing = true;
 	bool importance_sampling = false;
-
 	bool is_oren_nayar = false;
-	float roughness = 0.5f;
+	
+	float roughness = 0.5;
 	int number_g_images = 5;
-
+	double render_start_time;
+	
 	const auto clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
 	// Main loop
@@ -130,24 +134,31 @@ int main(int, char**)
 		ImGui::SliderInt("Sample depth", &sample_depth, 1, 100);
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 1000);
 		ImGui::SameLine();
-		ImGui::SameLine();
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
 		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
 		if (ImGui::Button("Render"))
 		{
-			application->TagClosestObject();
+			render_start_time = omp_get_wtime(); // Start the timer
 			row_counter = height - 1;
-			is_image_rendering = true;
+			should_image_render = true;
 		}
+
 		ImGui::SameLine();
 		if (ImGui::Button("Stop render"))
 		{
-			is_image_rendering = false;
+			should_image_render = false;
 		}
+		ImGui::SameLine();
+		ImGui::Checkbox("MP", &multi_processing);
+		ImGui::SameLine();
+		ImGui::Checkbox("Focusing", &focusing);
+		ImGui::SameLine();
+		ImGui::Checkbox("Importance sampling", &importance_sampling);
 
+		ImGui::Text("Image settings");
 		if (ImGui::Button("200 width"))
 		{
-			is_image_rendering = false;
+			should_image_render = false;
 			application->SetWidth(200);
 			width = application->GetImageWidth();
 			height = application->GetImageHeight();
@@ -155,7 +166,7 @@ int main(int, char**)
 		ImGui::SameLine();
 		if (ImGui::Button("400 width"))
 		{
-			is_image_rendering = false;
+			should_image_render = false;
 			application->SetWidth(400);
 			width = application->GetImageWidth();
 			height = application->GetImageHeight();
@@ -163,7 +174,7 @@ int main(int, char**)
 		ImGui::SameLine();
 		if (ImGui::Button("600 width"))
 		{
-			is_image_rendering = false;
+			should_image_render = false;
 			application->SetWidth(600);
 			width = application->GetImageWidth();
 			height = application->GetImageHeight();
@@ -171,7 +182,7 @@ int main(int, char**)
 		ImGui::SameLine();
 		if (ImGui::Button("800 width"))
 		{
-			is_image_rendering = false;
+			should_image_render = false;
 			application->SetWidth(800);
 			width = application->GetImageWidth();
 			height = application->GetImageHeight();
@@ -188,6 +199,7 @@ int main(int, char**)
 			}
 		}
 
+		ImGui::Text("Scene settings");
 		if (ImGui::Button("Add random sphere"))
 			application->AddRandomSphere();
 		ImGui::SameLine();
@@ -196,7 +208,7 @@ int main(int, char**)
 		if (ImGui::Button("Clear scene"))
 			application->CleanScene();
 
-		ImGui::Text("Image generation WIP - app will most surely? crash");
+		ImGui::Text("Image generation settings");
 		ImGui::InputInt("#images", &number_g_images);
 		if (ImGui::Button("Generate"))
 			application->GenerateRandomImages(number_g_images);
@@ -215,32 +227,54 @@ int main(int, char**)
 			application->TagClosestObject();
 		}
 
-		ImGui::Checkbox("Focusing", &focusing);
-		ImGui::Checkbox("Importance sampling", &importance_sampling);
 
 		ImGui::End();
 
-		if (is_image_rendering)
+		if (should_image_render)
 		{
-			if (row_counter >= 0)
+			application->TagClosestObject();
+
+			if (multi_processing)
 			{
-				application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_oren_nayar, roughness,
-				                       focusing, importance_sampling);
-				if (row_counter % 10 == 0)
+				#pragma omp parallel for
+				for (int i = row_counter; i >= 0; i--)
 				{
-					const auto image = application->GetImage();
-					if (image != nullptr)
-					{
-						glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-						             GL_UNSIGNED_BYTE, image);
-					}
+					application->RenderRowMp(i, samples_per_pixel, sample_depth, is_oren_nayar, roughness, focusing,
+					                         importance_sampling);
 				}
+				const auto image = application->GetImage();
+				if (image != nullptr)
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+				should_image_render = false;
+				const double end_time = omp_get_wtime(); // Stop the timer
+				const double elapsed_time = end_time - render_start_time;
+				printf("Rendered image: %f seconds\n", elapsed_time);
 			}
 			else
 			{
-				is_image_rendering = false;
+				if (row_counter >= 0)
+				{
+					application->RenderRow(row_counter, samples_per_pixel, sample_depth, is_oren_nayar, roughness,
+					                       focusing, importance_sampling);
+					if (row_counter % 10 == 0)
+					{
+						const auto image = application->GetImage();
+						if (image != nullptr)
+						{
+							glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+							             GL_UNSIGNED_BYTE, image);
+						}
+					}
+				}
+				else
+				{
+					should_image_render = false;
+					const double end_time = omp_get_wtime(); // Stop the timer
+					const double elapsed_time = end_time - render_start_time;
+					printf("Rendered image: %f seconds\n", elapsed_time);
+				}
+				row_counter--;
 			}
-			row_counter--;
 		}
 
 		ImGui::Begin("Render window", nullptr);
@@ -277,5 +311,6 @@ int main(int, char**)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-	return 0;
+	return
+		0;
 }

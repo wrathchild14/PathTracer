@@ -63,6 +63,9 @@
     <ClCompile Include="External\tinyfiledialogs.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\PathTracer.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="External\ImGui\imconfig.h">
@@ -156,6 +159,9 @@
       <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="External\tinyfiledialogs.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PathTracer.h">
       <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
