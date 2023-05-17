@@ -100,7 +100,7 @@ int main(int, char**)
 	int samples_per_pixel = 25;
 	int row_counter = height - 1;
 
-	bool multi_processing = true;
+	bool multi_processing = false;
 	bool should_image_render = false;
 	bool focusing = true;
 	bool importance_sampling = false;

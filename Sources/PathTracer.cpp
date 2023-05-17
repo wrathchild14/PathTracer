@@ -88,7 +88,7 @@ void PathTracer::Render(const int i, const int j, int samples_per_pixel, const i
 	{
 		const auto u = (i + RandomDouble()) / (image_width_ - 1);
 		const auto v = (j + RandomDouble()) / (image_height_ - 1);
-		Ray ray = camera_->GetRay(u, v);
+		const Ray ray = camera_->GetRay(u, v);
 		pixel_color += RayColorImportanceSampling(ray, background_, world_, lights_, depth, is_oren_nayar, roughness,
 		                                          samples_per_pixel);
 	}
@@ -242,12 +242,14 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 			this->AddRandomSphere();
 
 		// render image
-		if (parallel) {
-			#pragma omp parallel for schedule(dynamic)
+		if (parallel)
+		{
+#pragma omp parallel for schedule(dynamic)
 			for (int i = this->image_height_; i >= 0; i--)
 				for (int j = 0; j <= this->image_width_; j++)
 					this->Render(i, j, 25, 30, false, 0.5, true, false);
-		} else
+		}
+		else
 		{
 			for (int i = this->image_height_; i >= 0; i--)
 				for (int j = 0; j <= this->image_width_; j++)
