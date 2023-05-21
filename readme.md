@@ -15,22 +15,22 @@ Features:
 - Sphere/Rectangle Diffuse Light
 - Russian roulette optimizer
 - Oren-Nayar for roughness and angle of incidence
-
-### Improvements:
-
 - Focused rendering
-- De-noising
+- [De-noising](https://github.com/wrathchild14/PTNetworks) - uses a U Net implementation of a de-nosing network trained on data generated from this path tracer
 
-Some results: (Note: its a WIP, focusing works on choosing the closest sphere)
+Some results:
 
 ![](Results/50_100.jpg)
 ![](Results/30_100_800.jpg)
 
-- Adding new meshes
-- Faster rendering (parallelization)
-- Positioning of the camera
+### Improvements:
 
-## Old Results
+- Adding new meshes
+- Faster rendering (parallelization) - current version doesn't work nicely
+- Positioning of the camera
+- Selecting which sphere to focus
+
+## How did the path tracer improve
 
 ### 91 samples, 30 sample depth
 
