@@ -1,30 +1,23 @@
 ﻿#include "ModelController.h"
 
-#include <algorithm>
 
-
-ModelController::ModelController()
-	: session_(nullptr), input_tensor_(nullptr), output_tensor_(nullptr), input_elements_(0)
+ModelController::ModelController() : session_(nullptr), input_tensor_(nullptr), output_tensor_(nullptr)
 {
-	channels = 3;
-	width = 400;
-	height = 400;
-	input_elements_ = channels * height * width;
+	channels_ = 3;
+	width_ = 400;
+	height_ = 400;
+	input_elements_ = channels_ * height_ * width_;
 
 	input_.resize(input_elements_);
 }
 
 void ModelController::LoadModel(const uint8_t* image_data)
 {
-	Ort::Env env;
-	// Ort::Session session(nullptr);
-
-	// note this works with loading a picture locally (will need to send data here)
-	// const std::string image_file = "C:\\Git\\DenoisingProject\\image.jpg";
 	const auto model_path = L"C:\\Git\\Masters\\nrg\\PathTracer\\Sources\\model_unet.onnx";
 
-	Ort::SessionOptions ort_session_options;
+	const Ort::Env env;
 
+	const Ort::SessionOptions ort_session_options;
 	OrtCUDAProviderOptions options;
 	options.device_id = 0;
 	OrtSessionOptionsAppendExecutionProvider_CUDA(ort_session_options, options.device_id);
@@ -33,31 +26,23 @@ void ModelController::LoadModel(const uint8_t* image_data)
 
 	input_.resize(input_elements_);
 	output_.resize(input_elements_);
-	// for (int i = 0; i < input_elements_; i++)
-	// {
-	// 	const float normalized_value = (static_cast<float>(image_data[i]) / 127.5f) - 1.0f;
-	// 	input_[i] = normalized_value;
-	// }
 	
-	for (int row = 0; row < height; ++row)
+	for (int row = 0; row < height_; ++row)
 	{
-		for (int col = 0; col < width; ++col)
+		for (int col = 0; col < width_; ++col)
 		{
-			// auto pixel = image.at<cv::Vec3b>(row, col);
-
-			for (int ch = 0; ch < 3; ++ch)
+			for (int ch = 0; ch < channels_; ++ch)
 			{
-				size_t index = (row * width + col) * 3 + ch;
-				input_[ch * width * height + row * width + col] = static_cast<float>(image_data[index]) / 127.5 - 1.0;
+				const size_t index = (row * width_ + col) * channels_ + ch;
+				input_[ch * width_ * height_ + row * width_ + col] = static_cast<float>(image_data[index]) / 127.5f - 1.0f;
 			}
 		}
 	}
 
-	const std::array<int64_t, 4> input_shape = {1, 3, 400, 400};
-	const std::array<int64_t, 4> output_shape = {1, 3, 400, 400};
+	const std::array<int64_t, 4> input_shape = {1, channels_, height_, width_};
+	const std::array<int64_t, 4> output_shape = {1, channels_, height_, width_};
 
-	// std::vector<float> output(input_elements_);
-	Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+	const Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 	input_tensor_ = Ort::Value::CreateTensor<float>(memory_info, input_.data(), input_elements_,
 	                                                input_shape.data(), input_shape.size());
 	output_tensor_ = Ort::Value::CreateTensor<float>(memory_info, output_.data(), output_.size(),
@@ -78,19 +63,15 @@ void ModelController::LoadModel(const uint8_t* image_data)
 	}
 	catch (Ort::Exception& e)
 	{
-		std::cout << e.what() << std::endl;
+		// std::cout << e.what() << std::endl;
 	}
 }
 
-void ModelController::Run()
+uint8_t* ModelController::GetResults() const
 {
-}
-
-uint8_t* ModelController::GetResults()
-{
-	const float* output_data_ptr = output_tensor_.GetTensorData<float>();
-	size_t output_data_size = output_tensor_.GetTensorTypeAndShapeInfo().GetElementCount();
-	std::vector<float> output_data(output_data_ptr, output_data_ptr + output_data_size);
+	const auto* output_data_ptr = output_tensor_.GetTensorData<float>();
+	const size_t output_data_size = output_tensor_.GetTensorTypeAndShapeInfo().GetElementCount();
+	const std::vector<float> output_data(output_data_ptr, output_data_ptr + output_data_size);
 
 	std::vector<float> output_normalized(output_data.size());
 	for (size_t i = 0; i < output_data.size(); ++i)
@@ -108,15 +89,15 @@ uint8_t* ModelController::GetResults()
 		{
 			for (size_t ch = 0; ch < 3; ++ch)
 			{
-				size_t index = (row * width + col) * 3 + ch;
-				float value = output_normalized[ch * height * width + row * width + col];
-				float scaled_value = value * 255.0f;
+				const size_t index = (row * width + col) * 3 + ch;
+				const float value = output_normalized[ch * height * width + row * width + col];
+				const float scaled_value = value * 255.0f;
 				image_data[index] = static_cast<uint8_t>(scaled_value);
 			}
 		}
 	}
 
-	uint8_t* result = new uint8_t[image_data.size()];
+	auto* result = new uint8_t[image_data.size()];
 	std::copy(image_data.begin(), image_data.end(), result);
 	return result;
 }

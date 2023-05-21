@@ -92,9 +92,9 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	// Settings
 	ModelController model_controller;
 
-	// Settings
 	const auto application = new Application();
 	application->SetWidth(400);
 	int width = application->GetImageWidth();
@@ -140,41 +140,28 @@ int main(int, char**)
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
 		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
 
-		if (ImGui::Button("init"))
-		{
-			const auto image = application->GetImage();
-			model_controller.LoadModel(image);
-			std::cout << "loaded model" << std::endl;
-		}
-		if (ImGui::Button("run"))
-		{
-			model_controller.Run();
-			std::cout << "ran model" << std::endl;
-		}
-
-		if (ImGui::Button("change picture"))
-		{
-			const auto image = model_controller.GetResults();
-			if (image != nullptr)
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-				             GL_UNSIGNED_BYTE, image);
-			
-			std::cout << "predicated the picture" << std::endl;
-		}
-
 		if (ImGui::Button("Render"))
 		{
 			render_start_time = omp_get_wtime(); // Start the timer
 			row_counter = height - 1;
 			should_image_render = true;
 		}
-
 		ImGui::SameLine();
 		if (ImGui::Button("Stop render"))
 		{
 			should_image_render = false;
 		}
 		ImGui::SameLine();
+		if (ImGui::Button("Magic"))
+		{
+			const auto image = application->GetImage();
+			model_controller.LoadModel(image);
+			const auto new_image = model_controller.GetResults();
+			if (new_image != nullptr)
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+							 GL_UNSIGNED_BYTE, new_image);
+		}
+		
 		ImGui::Checkbox("MP", &multi_processing);
 		ImGui::SameLine();
 		ImGui::Checkbox("Focusing", &focusing);
