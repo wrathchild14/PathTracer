@@ -228,15 +228,6 @@ int main(int, char**)
 		if (ImGui::Button("Generate"))
 			application->GenerateRandomImages(number_g_images, multi_processing);
 
-		if (ImGui::Button("Print labels"))
-		{
-			for (const auto& label : application->GetLabels())
-			{
-				std::cout << "Screen space: " << label.x << " " << label.y << " w: " << label.width << " h:" << label.
-					height << "\n";
-			}
-		}
-
 		if (ImGui::Button("Tag closest"))
 		{
 			application->TagClosestObject();
