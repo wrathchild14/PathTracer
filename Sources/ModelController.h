@@ -21,5 +21,8 @@ private:
 	std::vector<const char*> output_names_;
 	int64_t input_elements_;
 	std::vector<float> input_;
-	
+	std::vector<float> output_;
+	int channels;
+	int width;
+	int height;
 };

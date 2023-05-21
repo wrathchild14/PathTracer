@@ -6,9 +6,9 @@
 ModelController::ModelController()
 	: session_(nullptr), input_tensor_(nullptr), output_tensor_(nullptr), input_elements_(0)
 {
-	constexpr int64_t channels = 3;
-	constexpr int64_t width = 400;
-	constexpr int64_t height = 400;
+	channels = 3;
+	width = 400;
+	height = 400;
 	input_elements_ = channels * height * width;
 
 	input_.resize(input_elements_);
@@ -31,26 +31,37 @@ void ModelController::LoadModel(const uint8_t* image_data)
 
 	session_ = Ort::Session(env, model_path, ort_session_options);
 
-
-	for (int i = 0; i < input_elements_; i++)
+	input_.resize(input_elements_);
+	output_.resize(input_elements_);
+	// for (int i = 0; i < input_elements_; i++)
+	// {
+	// 	const float normalized_value = (static_cast<float>(image_data[i]) / 127.5f) - 1.0f;
+	// 	input_[i] = normalized_value;
+	// }
+	
+	for (int row = 0; row < height; ++row)
 	{
-		// std::cout <<  image_data[i] << " ";
-		const float normalized_value = (static_cast<float>(image_data[i]) / 127.5f) - 1.0f;
-		input_[i] = normalized_value;
-	}
+		for (int col = 0; col < width; ++col)
+		{
+			// auto pixel = image.at<cv::Vec3b>(row, col);
 
+			for (int ch = 0; ch < 3; ++ch)
+			{
+				size_t index = (row * width + col) * 3 + ch;
+				input_[ch * width * height + row * width + col] = static_cast<float>(image_data[index]) / 127.5 - 1.0;
+			}
+		}
+	}
 
 	const std::array<int64_t, 4> input_shape = {1, 3, 400, 400};
 	const std::array<int64_t, 4> output_shape = {1, 3, 400, 400};
 
-	std::vector<float> output(input_elements_);
-
-	auto memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
-	
-	input_tensor_ = Ort::Value::CreateTensor<float>(memory_info, input_.data(), input_.size(), input_shape.data(),
-													input_shape.size());
-	output_tensor_ = Ort::Value::CreateTensor<float>(memory_info, output.data(), output.size(), output_shape.data(),
-													 output_shape.size());
+	// std::vector<float> output(input_elements_);
+	Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
+	input_tensor_ = Ort::Value::CreateTensor<float>(memory_info, input_.data(), input_elements_,
+	                                                input_shape.data(), input_shape.size());
+	output_tensor_ = Ort::Value::CreateTensor<float>(memory_info, output_.data(), output_.size(),
+	                                                 output_shape.data(), output_shape.size());
 
 	Ort::AllocatorWithDefaultOptions ort_alloc;
 	Ort::AllocatedStringPtr input_name = session_.GetInputNameAllocated(0, ort_alloc);
@@ -59,10 +70,7 @@ void ModelController::LoadModel(const uint8_t* image_data)
 	output_names_ = {output_name.get()};
 	input_name.release();
 	output_name.release();
-}
 
-void ModelController::Run()
-{
 	try
 	{
 		const Ort::RunOptions run_options;
@@ -74,32 +82,41 @@ void ModelController::Run()
 	}
 }
 
+void ModelController::Run()
+{
+}
+
 uint8_t* ModelController::GetResults()
 {
-	// std::vector<float> output_data(output_tensor_.GetTensorMutableData<float>(),
-	//                                output_tensor_.GetTensorMutableData<float>() + output_tensor_.
-	//                                GetTensorTypeAndShapeInfo().GetElementCount());
-	const float* output_data_ptr = output_tensor_.GetTensorMutableData<float>();
+	const float* output_data_ptr = output_tensor_.GetTensorData<float>();
 	size_t output_data_size = output_tensor_.GetTensorTypeAndShapeInfo().GetElementCount();
 	std::vector<float> output_data(output_data_ptr, output_data_ptr + output_data_size);
-	
-	// Scale the float values to the range of 0-255
-	float min_value = *std::min_element(output_data.begin(), output_data.end());
-	float max_value = *std::max_element(output_data.begin(), output_data.end());
-	float range = max_value - min_value;
 
-	std::vector<uint8_t> image_data(output_data.size());
+	std::vector<float> output_normalized(output_data.size());
 	for (size_t i = 0; i < output_data.size(); ++i)
 	{
-		float scaled_value = (output_data[i] - min_value) / range * 255.0f;
-		image_data[i] = static_cast<uint8_t>(scaled_value);
+		output_normalized[i] = (output_data[i] + 1.0) / 2.0;
 	}
 
-	// You can now use the image data for further processing or return it from the function
-	// Remember to manage memory appropriately, such as allocating memory for the image data using 'new' or 'malloc' and returning it to the caller. Make sure to free the memory when it's no longer needed.
+	const int height = 400;
+	const int width = 400;
+	std::vector<uint8_t> image_data(height * width * 3);
 
-	// Example: Returning the image data as a dynamically allocated array
-	auto result = new uint8_t[image_data.size()];
+	for (size_t row = 0; row < height; ++row)
+	{
+		for (size_t col = 0; col < width; ++col)
+		{
+			for (size_t ch = 0; ch < 3; ++ch)
+			{
+				size_t index = (row * width + col) * 3 + ch;
+				float value = output_normalized[ch * height * width + row * width + col];
+				float scaled_value = value * 255.0f;
+				image_data[index] = static_cast<uint8_t>(scaled_value);
+			}
+		}
+	}
+
+	uint8_t* result = new uint8_t[image_data.size()];
 	std::copy(image_data.begin(), image_data.end(), result);
 	return result;
 }
