@@ -233,6 +233,7 @@ Color PathTracer::RayColor(const Ray& ray, const Color& background, const std::s
 
 void PathTracer::GenerateRandomImages(const int count, const bool parallel) const
 {
+	// generate clean data
 	for (int counter = 1; counter <= count; counter++)
 	{
 		// clean scene and generate random spheres
@@ -257,11 +258,24 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 		}
 
 		// save image - absolute path for now... (todo)
-		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images)";
+		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\clean)";
 		std::string path = location + R"(\generated_image_)" + std::to_string(counter) + ".jpg";
 		stbi_flip_vertically_on_write(true);
 		stbi_write_png(path.c_str(), image_width_, image_height_, 3,
 		               image_, image_width_ * 3);
+
+		
+		// render noisy image
+		for (int i = this->image_height_; i >= 0; i--)
+			for (int j = 0; j <= this->image_width_; j++)
+				this->Render(i, j, 2, 8, false, 0.5, true, 2, true);
+
+		// save image - absolute path for now... (todo)
+		location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\noisy)";
+		path = location + R"(\generated_image_)" + std::to_string(counter) + ".jpg";
+		stbi_flip_vertically_on_write(true);
+		stbi_write_png(path.c_str(), image_width_, image_height_, 3,
+					   image_, image_width_ * 3);
 	}
 }
 
@@ -285,7 +299,7 @@ void PathTracer::AddCornellBoxToWorld() const
 
 void PathTracer::AddRandomSphere() const
 {
-	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(-300, 500)),
+	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(-100, 500)),
 	                                     RandomInt(5, 100), GetRandomMaterial()));
 }
 
