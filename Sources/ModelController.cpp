@@ -13,7 +13,7 @@ ModelController::ModelController() : session_(nullptr), input_tensor_(nullptr), 
 
 void ModelController::LoadModel(const uint8_t* image_data)
 {
-	const auto model_path = L"C:\\Git\\Masters\\nrg\\PathTracer\\Sources\\model_unet.onnx";
+	const auto model_path = L"C:\\Git\\Masters\\nrg\\PathTracer\\models\\model_unet.onnx";
 
 	const Ort::Env env;
 
