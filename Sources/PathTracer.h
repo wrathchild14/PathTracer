@@ -20,10 +20,10 @@ class PathTracer
 {
 public:
 	PathTracer() = default;
-	PathTracer(unsigned char* image, double aspect_ratio);
+	PathTracer(uint8_t* image, double aspect_ratio);
 
 	void SetImageWidth(int width);
-	unsigned char* GetImage() const;
+	uint8_t* GetImage() const;
 	int GetImageWidth() const;
 	int GetImageHeight() const;
 	bool IsInScreenBoxes(int i, int j) const;

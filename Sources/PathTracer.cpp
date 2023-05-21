@@ -17,7 +17,7 @@ void PathTracer::SetImageWidth(const int width)
 	image_ = new uint8_t[image_height_ * image_width_ * 3];
 }
 
-unsigned char* PathTracer::GetImage() const
+uint8_t* PathTracer::GetImage() const
 {
 	if (image_ != nullptr)
 	{
