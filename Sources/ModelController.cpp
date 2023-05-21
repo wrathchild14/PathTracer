@@ -1,5 +1,7 @@
 ﻿#include "ModelController.h"
 
+#include <codecvt>
+
 
 ModelController::ModelController() : session_(nullptr), input_tensor_(nullptr), output_tensor_(nullptr)
 {
@@ -13,8 +15,12 @@ ModelController::ModelController() : session_(nullptr), input_tensor_(nullptr), 
 
 void ModelController::LoadModel(const uint8_t* image_data)
 {
-	const auto model_path = L"C:\\Git\\Masters\\nrg\\PathTracer\\models\\model_unet.onnx";
-
+	const std::string current_file_path(__FILE__);
+	const std::string project_path = current_file_path.substr(0, current_file_path.find_last_of("/\\"));
+	std::string model_path = project_path + "/models/model_unet.onnx";
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	std::wstring converted_model_path = converter.from_bytes(model_path);
+	
 	const Ort::Env env;
 
 	const Ort::SessionOptions ort_session_options;
@@ -22,7 +28,7 @@ void ModelController::LoadModel(const uint8_t* image_data)
 	options.device_id = 0;
 	OrtSessionOptionsAppendExecutionProvider_CUDA(ort_session_options, options.device_id);
 
-	session_ = Ort::Session(env, model_path, ort_session_options);
+	session_ = Ort::Session(env, converted_model_path.c_str(), ort_session_options);
 
 	input_.resize(input_elements_);
 	output_.resize(input_elements_);
