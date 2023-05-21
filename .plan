@@ -1,12 +1,10 @@
-**focused rendering - smart ray generation with deep learning
-* will extract bounding boxes which (for spheres) can calculate the area of pixels in the image needed for focusing
-
+DONE:
+focused rendering - smart ray generation with deep learning
+* with tagging
+* importance sampling
 post processing:
-* autoencoder denoiser network - https://research.nvidia.com/sites/default/files/publications/dnn_denoise_author.pdf
-* diffusion models
+* u net denoiser network with skip connections
 
-PT changes:
+TODO:
+* selection on focusing target
 * add image class for image data handling
-
-naive method:
-* mark spheres which are closest to the camera to send out more samples to them
