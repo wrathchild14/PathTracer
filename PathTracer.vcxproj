@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.props" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.props')" />
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -149,6 +150,7 @@
     <ClCompile Include="External\ImGui\imgui_tables.cpp" />
     <ClCompile Include="External\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Sources\Main.cpp" />
+    <ClCompile Include="Sources\ModelController.cpp" />
     <ClCompile Include="Sources\PathTracer.cpp" />
     <ClCompile Include="Sources\Primitives\HittableList.cpp">
       <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
@@ -394,6 +396,7 @@
     <ClInclude Include="Sources\Materials\Lambertian.h" />
     <ClInclude Include="Sources\Materials\Material.h" />
     <ClInclude Include="Sources\Materials\Pdf.h" />
+    <ClInclude Include="Sources\ModelController.h" />
     <ClInclude Include="Sources\PathTracer.h" />
     <ClInclude Include="Sources\Primitives\FlipFace.h" />
     <ClInclude Include="Sources\Primitives\Hittable.h" />
@@ -410,7 +413,18 @@
   <ItemGroup>
     <Content Include="readme.md" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.targets" Condition="Exists('packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.props'))" />
+    <Error Condition="!Exists('packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.ML.OnnxRuntime.Gpu.1.14.1\build\native\Microsoft.ML.OnnxRuntime.Gpu.targets'))" />
+  </Target>
 </Project>

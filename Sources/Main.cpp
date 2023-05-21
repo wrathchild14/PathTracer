@@ -25,6 +25,7 @@
 #endif
 
 #include "Application.h"
+#include "ModelController.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -91,20 +92,22 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	ModelController model_controller;
+
 	// Settings
 	const auto application = new Application();
 	application->SetWidth(400);
 	int width = application->GetImageWidth();
 	int height = application->GetImageHeight();
-	int sample_depth = 50;
-	int samples_per_pixel = 25;
+	int sample_depth = 8;
+	int samples_per_pixel = 2;
 	int row_counter = height - 1;
 	int focus_multiplier = 2;
 
 	bool multi_processing = false;
 	bool should_image_render = false;
-	bool focusing = true;
-	bool importance_sampling = false;
+	bool focusing = false;
+	bool importance_sampling = true;
 	bool is_oren_nayar = false;
 
 	float roughness = 0.5;
@@ -136,6 +139,29 @@ int main(int, char**)
 		ImGui::SliderInt("Samples per pixel", &samples_per_pixel, 1, 300);
 		ImGui::Checkbox("Oren-Nayar", &is_oren_nayar);
 		ImGui::SliderFloat("Oren-Nayar roughness", &roughness, 0.0, 1.0);
+
+		if (ImGui::Button("init"))
+		{
+			const auto image = application->GetImage();
+			model_controller.LoadModel(image);
+			std::cout << "loaded model" << std::endl;
+		}
+		if (ImGui::Button("run"))
+		{
+			model_controller.Run();
+			std::cout << "ran model" << std::endl;
+		}
+
+		if (ImGui::Button("change picture"))
+		{
+			const auto image = model_controller.GetResults();
+			if (image != nullptr)
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+				             GL_UNSIGNED_BYTE, image);
+			
+			std::cout << "predicated the picture" << std::endl;
+		}
+
 		if (ImGui::Button("Render"))
 		{
 			render_start_time = omp_get_wtime(); // Start the timer
