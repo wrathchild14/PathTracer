@@ -264,7 +264,7 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 		stbi_write_png(path.c_str(), image_width_, image_height_, 3,
 		               image_, image_width_ * 3);
 
-		
+
 		// render noisy image
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; j <= this->image_width_; j++)
@@ -275,7 +275,7 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 		path = location + R"(\generated_image_)" + std::to_string(counter) + ".jpg";
 		stbi_flip_vertically_on_write(true);
 		stbi_write_png(path.c_str(), image_width_, image_height_, 3,
-					   image_, image_width_ * 3);
+		               image_, image_width_ * 3);
 	}
 }
 
@@ -343,4 +343,10 @@ std::vector<ScreenBox> PathTracer::GetSphereScreenBoxes() const
 void PathTracer::TagClosestObject() const
 {
 	world_->TagClosestObject(*camera_);
+}
+
+void PathTracer::SetImage(uint8_t* new_image)
+{
+	if (new_image != nullptr)
+		image_ = new_image;
 }

@@ -28,8 +28,8 @@ public:
 	int GetImageHeight() const;
 	bool IsInScreenBoxes(int i, int j) const;
 
-	void Render(const int i, const int j, int samples_per_pixel, const int depth, const bool is_oren_nayar,
-	            const double roughness, const bool focusing, const int focus_multiplier, const bool importance_sampling) const;
+	void Render(int i, int j, int samples_per_pixel, int depth, bool is_oren_nayar,
+	            double roughness, bool focusing, int focus_multiplier, bool importance_sampling) const;
 	Color RayColorImportanceSampling(const Ray& ray, const Color& background,
 	                                 const std::shared_ptr<HittableList>& world,
 	                                 const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar,
@@ -37,7 +37,7 @@ public:
 	Color RayColor(const Ray& ray, const Color& background, const std::shared_ptr<HittableList>& world,
 	               const std::shared_ptr<Hittable>& lights, int depth, bool is_oren_nayar, double roughness) const;
 
-	void GenerateRandomImages(const int count, const bool parallel) const;
+	void GenerateRandomImages(int count, bool parallel) const;
 	void AddCornellBoxToWorld() const;
 	void AddRandomSphere() const;
 	std::shared_ptr<Material> GetRandomMaterial() const;
@@ -47,6 +47,7 @@ public:
 	std::vector<ScreenBox> GetSphereScreenBoxes() const;
 
 	void TagClosestObject() const;
+	void SetImage(uint8_t* new_image);
 
 private:
 	uint8_t* image_;

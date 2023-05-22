@@ -158,8 +158,11 @@ int main(int, char**)
 			model_controller.LoadModel(image);
 			const auto new_image = model_controller.GetResults();
 			if (new_image != nullptr)
+			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
 				             GL_UNSIGNED_BYTE, new_image);
+				application->SetImage(new_image);
+			}
 		}
 
 		ImGui::Checkbox("MP", &multi_processing);
