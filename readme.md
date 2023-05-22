@@ -17,6 +17,7 @@ Features:
 - Oren-Nayar for roughness and angle of incidence
 - Focused rendering
 - [De-noising](https://github.com/wrathchild14/PTNetworks) - uses a U Net implementation of a de-nosing network trained on data generated from this path tracer
+	- for now it only its only trained on one shape (1, 3, 400, 400)	
 
 Some results:
 

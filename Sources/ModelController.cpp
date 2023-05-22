@@ -85,18 +85,16 @@ uint8_t* ModelController::GetResults() const
 		output_normalized[i] = (output_data[i] + 1.0) / 2.0;
 	}
 
-	const int height = 400;
-	const int width = 400;
-	std::vector<uint8_t> image_data(height * width * 3);
+	std::vector<uint8_t> image_data(height_ * width_* channels_);
 
-	for (size_t row = 0; row < height; ++row)
+	for (size_t row = 0; row < height_; ++row)
 	{
-		for (size_t col = 0; col < width; ++col)
+		for (size_t col = 0; col < width_; ++col)
 		{
-			for (size_t ch = 0; ch < 3; ++ch)
+			for (size_t ch = 0; ch < channels_; ++ch)
 			{
-				const size_t index = (row * width + col) * 3 + ch;
-				const float value = output_normalized[ch * height * width + row * width + col];
+				const size_t index = (row * width_ + col) * 3 + ch;
+				const float value = output_normalized[ch * height_ * width_ + row * width_ + col];
 				const float scaled_value = value * 255.0f;
 				image_data[index] = static_cast<uint8_t>(scaled_value);
 			}
