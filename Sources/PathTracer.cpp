@@ -299,7 +299,7 @@ void PathTracer::AddCornellBoxToWorld() const
 
 void PathTracer::AddRandomSphere() const
 {
-	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(-100, 500)),
+	world_->Add(std::make_shared<Sphere>(Point3(RandomInt(0, 500), RandomInt(0, 500), RandomInt(100, 500)),
 	                                     RandomInt(5, 100), GetRandomMaterial()));
 }
 
