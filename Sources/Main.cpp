@@ -165,10 +165,10 @@ int main(int, char**)
 			}
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Even more magic"))
+		if (ImGui::Button("General magic"))
 		{
 			const auto image = application->GetImage();
-			model_controller.RunModel(image, "large_unet");
+			model_controller.RunModel(image, "general_unet");
 			const auto new_image = model_controller.GetResults();
 			if (new_image != nullptr)
 			{
