@@ -52,3 +52,39 @@ Opening the solution file should work
 ### Linux
 
 TBD
+
+## Random data
+
+
+Lines of code:
+```
+   91 ./Application.cpp
+   34 ./Application.h
+   339 ./Main.cpp
+   25 ./Materials/DiffuseLight.h
+   58 ./Materials/Glass.h
+   36 ./Materials/Lambertian.h
+   36 ./Materials/Material.h
+   25 ./Materials/Metal.h
+   11 ./Materials/Pdf.h
+   119 ./Materials/Pdfs.h
+   107 ./ModelController.cpp
+   26 ./ModelController.h
+   341 ./PathTracer.cpp
+   61 ./PathTracer.h
+   23 ./Primitives/FlipFace.h
+   36 ./Primitives/Hittable.h
+   113 ./Primitives/HittableList.cpp
+   39 ./Primitives/HittableList.h
+   52 ./Primitives/Rectangle.cpp
+   108 ./Primitives/Rectangle.h
+   76 ./Primitives/Sphere.cpp
+   36 ./Primitives/Sphere.h
+   38 ./Utility/AABB.h
+   66 ./Utility/Camera.h
+   32 ./Utility/Common.h
+   39 ./Utility/OrthonomalBasis.h
+   22 ./Utility/Ray.h
+   185 ./Utility/Vec3.h
+   2174 total
+```
