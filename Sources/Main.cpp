@@ -168,7 +168,7 @@ int main(int, char**)
 		if (ImGui::Button("Even more magic"))
 		{
 			const auto image = application->GetImage();
-			model_controller.RunModel(image, "precise_unet");
+			model_controller.RunModel(image, "large_unet");
 			const auto new_image = model_controller.GetResults();
 			if (new_image != nullptr)
 			{
