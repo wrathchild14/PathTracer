@@ -13,14 +13,14 @@ ModelController::ModelController() : session_(nullptr), input_tensor_(nullptr), 
 	input_.resize(input_elements_);
 }
 
-void ModelController::LoadModel(const uint8_t* image_data)
+void ModelController::RunModel(const uint8_t* image_data, const std::string& model_name)
 {
 	const std::string current_file_path(__FILE__);
 	const std::string project_path = current_file_path.substr(0, current_file_path.find_last_of("/\\"));
-	std::string model_path = project_path + "/models/model_unet.onnx";
+	std::string model_path = project_path + "/models/model_" + model_name + ".onnx";
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 	std::wstring converted_model_path = converter.from_bytes(model_path);
-	
+
 	const Ort::Env env;
 
 	const Ort::SessionOptions ort_session_options;
@@ -32,7 +32,7 @@ void ModelController::LoadModel(const uint8_t* image_data)
 
 	input_.resize(input_elements_);
 	output_.resize(input_elements_);
-	
+
 	for (int row = 0; row < height_; ++row)
 	{
 		for (int col = 0; col < width_; ++col)
@@ -45,20 +45,20 @@ void ModelController::LoadModel(const uint8_t* image_data)
 		}
 	}
 
-	const std::array<int64_t, 4> input_shape = {1, channels_, height_, width_};
-	const std::array<int64_t, 4> output_shape = {1, channels_, height_, width_};
+	const std::array<int64_t, 4> input_shape = { 1, channels_, height_, width_ };
+	const std::array<int64_t, 4> output_shape = { 1, channels_, height_, width_ };
 
 	const Ort::MemoryInfo memory_info = Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeCPU);
 	input_tensor_ = Ort::Value::CreateTensor<float>(memory_info, input_.data(), input_elements_,
-	                                                input_shape.data(), input_shape.size());
+		input_shape.data(), input_shape.size());
 	output_tensor_ = Ort::Value::CreateTensor<float>(memory_info, output_.data(), output_.size(),
-	                                                 output_shape.data(), output_shape.size());
+		output_shape.data(), output_shape.size());
 
 	Ort::AllocatorWithDefaultOptions ort_alloc;
 	Ort::AllocatedStringPtr input_name = session_.GetInputNameAllocated(0, ort_alloc);
 	Ort::AllocatedStringPtr output_name = session_.GetOutputNameAllocated(0, ort_alloc);
-	input_names_ = {input_name.get()};
-	output_names_ = {output_name.get()};
+	input_names_ = { input_name.get() };
+	output_names_ = { output_name.get() };
 	input_name.release();
 	output_name.release();
 
@@ -85,7 +85,7 @@ uint8_t* ModelController::GetResults() const
 		output_normalized[i] = (output_data[i] + 1.0) / 2.0;
 	}
 
-	std::vector<uint8_t> image_data(height_ * width_* channels_);
+	std::vector<uint8_t> image_data(height_ * width_ * channels_);
 
 	for (size_t row = 0; row < height_; ++row)
 	{
