@@ -56,7 +56,7 @@ TBD
 ## Random data
 
 
-Lines of code:
+Lines of code (23.5.2023) :
 ```
    91 ./Application.cpp
    34 ./Application.h

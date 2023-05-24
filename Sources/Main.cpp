@@ -93,7 +93,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	ModelController model_controller;
+	auto* model_controller = new ModelController();
 
 	const auto application = new Application();
 	application->SetWidth(400);
@@ -155,8 +155,8 @@ int main(int, char**)
 		if (ImGui::Button("Magic"))
 		{
 			const auto image = application->GetImage();
-			model_controller.RunModel(image, "unet");
-			const auto new_image = model_controller.GetResults();
+			model_controller->RunModel(image, "unet");
+			const auto new_image = model_controller->GetResults();
 			if (new_image != nullptr)
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
@@ -168,8 +168,8 @@ int main(int, char**)
 		if (ImGui::Button("General magic"))
 		{
 			const auto image = application->GetImage();
-			model_controller.RunModel(image, "general_unet");
-			const auto new_image = model_controller.GetResults();
+			model_controller->RunModel(image, "general_unet");
+			const auto new_image = model_controller->GetResults();
 			if (new_image != nullptr)
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
