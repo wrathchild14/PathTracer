@@ -155,7 +155,7 @@ int main(int, char**)
 		if (ImGui::Button("Magic"))
 		{
 			const auto image = application->GetImage();
-			model_controller->RunModel(image, "unet");
+			model_controller->RunModel(image, "unet", width, height, 3);
 			const auto new_image = model_controller->GetResults();
 			if (new_image != nullptr)
 			{
@@ -168,7 +168,7 @@ int main(int, char**)
 		if (ImGui::Button("General magic"))
 		{
 			const auto image = application->GetImage();
-			model_controller->RunModel(image, "general_unet");
+			model_controller->RunModel(image, "general_unet", width, height, 3);
 			const auto new_image = model_controller->GetResults();
 			if (new_image != nullptr)
 			{

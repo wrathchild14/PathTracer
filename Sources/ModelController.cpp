@@ -13,13 +13,18 @@ ModelController::ModelController() : session_(nullptr), input_tensor_(nullptr), 
 	input_.resize(input_elements_);
 }
 
-void ModelController::RunModel(const uint8_t* image_data, const std::string& model_name)
+void ModelController::RunModel(const uint8_t* image_data, const std::string& model_name, const int width, const int height, const int channels)
 {
 	const std::string current_file_path(__FILE__);
 	const std::string project_path = current_file_path.substr(0, current_file_path.find_last_of("/\\"));
 	std::string model_path = project_path + "/models/model_" + model_name + ".onnx";
 	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 	std::wstring converted_model_path = converter.from_bytes(model_path);
+
+	input_elements_ = channels * height * width;
+	width_ = width;
+	height_ = height;
+	channels_ = channels;
 
 	const Ort::Env env;
 

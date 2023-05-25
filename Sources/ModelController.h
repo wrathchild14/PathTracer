@@ -8,7 +8,7 @@ class ModelController
 {
 public:
 	ModelController();
-	void RunModel(const uint8_t* image_data, const std::string& model_name);
+	void RunModel(const uint8_t* image_data, const std::string& model_name, const int width, const int height, const int channels);
 	uint8_t* GetResults() const;
 
 private:
