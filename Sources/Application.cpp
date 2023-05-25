@@ -85,7 +85,12 @@ void Application::TagClosestObject() const
 	tracer_->TagClosestObject();
 }
 
-void Application::SetImage(uint8_t* new_image)
+void Application::SetImage(uint8_t* new_image) const
 {
 	tracer_->SetImage(new_image);
+}
+
+bool Application::TagObject(const int pixel_x, const int pixel_y) const
+{
+	return tracer_->TagObject(pixel_x, pixel_y);
 }

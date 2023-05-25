@@ -111,3 +111,25 @@ std::vector<ScreenBox> HittableList::GetSphereScreenBoxes(const Camera& camera, 
 	}
 	return labels;
 }
+
+void HittableList::ClearClosestSphereTags() const
+{
+	for (const auto& object : objects_)
+	{
+		std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>(object);
+		if (sphere)
+			sphere->IsClosest = false;
+	}
+}
+
+bool HittableList::HitSphere(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const
+{
+	for (const auto& object : objects_)
+	{
+		std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>(object);
+		if (sphere)
+			if (sphere->SetMain(ray, t_min, t_max, hit_record))
+				return true;
+	}
+	return false;
+}

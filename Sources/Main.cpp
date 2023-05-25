@@ -147,6 +147,14 @@ int main(int, char**)
 			should_image_render = true;
 		}
 		ImGui::SameLine();
+		if (ImGui::Button("Render (closest)"))
+		{
+			application->TagClosestObject();
+			render_start_time = omp_get_wtime(); // Start the timer
+			row_counter = height - 1;
+			should_image_render = true;
+		}
+		ImGui::SameLine();
 		if (ImGui::Button("Stop render"))
 		{
 			should_image_render = false;
@@ -173,7 +181,7 @@ int main(int, char**)
 			if (new_image != nullptr)
 			{
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-					GL_UNSIGNED_BYTE, new_image);
+				             GL_UNSIGNED_BYTE, new_image);
 				application->SetImage(new_image);
 			}
 		}
@@ -254,8 +262,6 @@ int main(int, char**)
 
 		if (should_image_render)
 		{
-			application->TagClosestObject();
-
 			if (multi_processing)
 			{
 #pragma omp parallel for
@@ -302,13 +308,30 @@ int main(int, char**)
 
 		ImGui::Begin("Render window", nullptr);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
 		const auto viewport_width = ImGui::GetContentRegionAvail().x;
 		const auto viewport_height = ImGui::GetContentRegionAvail().y;
-		// Uvs are for flipping the image, now the image is static and doesnt work with the viewport
-		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)),
-		             ImVec2(viewport_width, viewport_height),
+		const float scale_factor_x = static_cast<float>(width) / viewport_width;
+		const float scale_factor_y = static_cast<float>(height) / viewport_height;
+		const ImVec2 image_size(viewport_width, viewport_width * (static_cast<float>(height) / width));
+		ImGui::Image(reinterpret_cast<void*>(static_cast<intptr_t>(texture)), image_size,
 		             ImVec2(0, 1), ImVec2(1, 0));
+
+		if (ImGui::IsItemClicked())
+		{
+			const auto rec_min = ImGui::GetItemRectMin();
+			const auto mouse_pos = ImGui::GetMousePos();
+			const auto click_pos = ImVec2(mouse_pos.x - rec_min.x, mouse_pos.y - rec_min.y);
+
+			const auto clicked_pixel_x = static_cast<int>(click_pos.x * scale_factor_x);
+			const auto clicked_pixel_y = static_cast<int>(click_pos.y * scale_factor_y);
+
+			if (application->TagObject(clicked_pixel_x, clicked_pixel_y))
+				printf("Tagged object at: (%d, %d)\n", clicked_pixel_x, clicked_pixel_y);
+		}
+
 		ImGui::End();
+
 
 		// Rendering
 		ImGui::Render();

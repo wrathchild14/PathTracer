@@ -62,6 +62,16 @@ double Sphere::GetRadius() const
 	return radius_;
 }
 
+bool Sphere::SetMain(const Ray& ray, double t_min, double t_max, HitRecord& rec)
+{
+	if (this->Hit(ray, t_min, t_max, rec))
+	{
+		IsClosest = true;
+		return true;
+	}
+	return false;
+}
+
 Vec3 Sphere::RandomToSphere(const double radius, const double distance_squared) const
 {
 	const auto r1 = RandomDouble();

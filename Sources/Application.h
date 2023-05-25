@@ -27,7 +27,8 @@ public:
 	void CleanScene() const;
 
 	void TagClosestObject() const;
-	void SetImage(uint8_t* new_image);
+	void SetImage(uint8_t* new_image) const;
+	bool TagObject(int pixel_x, int pixel_y) const;
 
 private:
 	std::unique_ptr<PathTracer> tracer_;

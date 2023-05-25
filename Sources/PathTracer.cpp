@@ -242,20 +242,9 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 		for (int i = 0; i < random_int; i++)
 			this->AddRandomSphere();
 
-		// render image
-		if (parallel)
-		{
-#pragma omp parallel for schedule(dynamic)
-			for (int i = this->image_height_; i >= 0; i--)
-				for (int j = 0; j <= this->image_width_; j++)
-					this->Render(i, j, 50, 30, false, 0.5, true, 4, false);
-		}
-		else
-		{
-			for (int i = this->image_height_; i >= 0; i--)
-				for (int j = 0; j <= this->image_width_; j++)
-					this->Render(i, j, 50, 30, false, 0.5, true, 4, false);
-		}
+		for (int i = this->image_height_; i >= 0; i--)
+			for (int j = 0; j <= this->image_width_; j++)
+				this->Render(i, j, 100, 30, false, 0.5, false, 4, false);
 
 		// save image - absolute path for now... (todo)
 		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\clean)";
@@ -268,7 +257,7 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 		// render noisy image
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; j <= this->image_width_; j++)
-				this->Render(i, j, 2, 8, false, 0.5, true, 2, true);
+				this->Render(i, j, 1, 5, false, 0.5, false, 2, true);
 
 		// save image - absolute path for now... (todo)
 		location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\noisy)";
@@ -349,4 +338,16 @@ void PathTracer::SetImage(uint8_t* new_image)
 {
 	if (new_image != nullptr)
 		image_ = new_image;
+}
+
+bool PathTracer::TagObject(const int pixel_x, const int pixel_y) const
+{
+	const auto u = (pixel_x + RandomDouble()) / (image_width_ - 1);
+	const auto v = 1 - (pixel_y + RandomDouble()) / (image_height_ - 1); // flipped
+	HitRecord test_record;
+	const Ray test_ray = camera_->GetRay(u, v);
+	world_->ClearClosestSphereTags();
+	if (world_->HitSphere(test_ray, 0.001, infinity, test_record))
+		return true;
+	return false;
 }

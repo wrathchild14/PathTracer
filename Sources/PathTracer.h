@@ -48,6 +48,7 @@ public:
 
 	void TagClosestObject() const;
 	void SetImage(uint8_t* new_image);
+	bool TagObject(int pixel_x, int pixel_y) const;
 
 private:
 	uint8_t* image_;
