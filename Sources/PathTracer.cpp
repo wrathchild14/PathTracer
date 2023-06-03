@@ -347,7 +347,7 @@ bool PathTracer::TagObject(const int pixel_x, const int pixel_y) const
 	HitRecord test_record;
 	const Ray test_ray = camera_->GetRay(u, v);
 	world_->ClearClosestSphereTags();
-	if (world_->HitSphere(test_ray, 0.001, infinity, test_record))
+	if (world_->SetMainSphereIfHit(test_ray, 0.001, infinity, test_record))
 		return true;
 	return false;
 }

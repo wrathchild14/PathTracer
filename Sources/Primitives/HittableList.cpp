@@ -122,13 +122,13 @@ void HittableList::ClearClosestSphereTags() const
 	}
 }
 
-bool HittableList::HitSphere(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const
+bool HittableList::SetMainSphereIfHit(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const
 {
 	for (const auto& object : objects_)
 	{
 		std::shared_ptr<Sphere> sphere = std::dynamic_pointer_cast<Sphere>(object);
 		if (sphere)
-			if (sphere->SetMain(ray, t_min, t_max, hit_record))
+			if (sphere->SetMainIfHit(ray, t_min, t_max, hit_record))
 				return true;
 	}
 	return false;

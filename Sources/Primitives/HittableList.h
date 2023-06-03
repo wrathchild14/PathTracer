@@ -34,7 +34,7 @@ public:
 
 	std::vector<ScreenBox> GetSphereScreenBoxes(const Camera& camera, const int& width, const int& height) const;
 	void ClearClosestSphereTags() const;
-	bool HitSphere(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const;
+	bool SetMainSphereIfHit(const Ray& ray, double t_min, double t_max, HitRecord& hit_record) const;
 
 private:
 	std::vector<std::shared_ptr<Hittable>> objects_;

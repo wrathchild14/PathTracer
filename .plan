@@ -4,7 +4,10 @@ focused rendering - smart ray generation with deep learning
 * importance sampling
 post processing:
 * u net denoiser network with skip connections
+* selection on focusing target
 
 TODO:
-* selection on focusing target
+* improve implementation of the click
 * add image class for image data handling
+* update readme and release to latest version of code
+* upload .onnx models

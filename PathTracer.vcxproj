@@ -414,6 +414,7 @@
     <Content Include="readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".plan" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

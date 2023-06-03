@@ -25,7 +25,7 @@ public:
 	Point3 GetCenter() const;
 	double GetRadius() const;
 
-	bool SetMain(const Ray& ray, double t_min, double t_max, HitRecord& rec);
+	bool SetMainIfHit(const Ray& ray, double t_min, double t_max, HitRecord& rec);
 
 	bool IsClosest = false;
 

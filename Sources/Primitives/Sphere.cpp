@@ -62,7 +62,7 @@ double Sphere::GetRadius() const
 	return radius_;
 }
 
-bool Sphere::SetMain(const Ray& ray, double t_min, double t_max, HitRecord& rec)
+bool Sphere::SetMainIfHit(const Ray& ray, double t_min, double t_max, HitRecord& rec)
 {
 	if (this->Hit(ray, t_min, t_max, rec))
 	{
