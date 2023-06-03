@@ -34,7 +34,7 @@ static void glfw_error_callback(int error, const char* description)
 
 int main(int, char**)
 {
-	srand(time(nullptr));
+	srand(static_cast<unsigned int>(time(nullptr)));
 
 	glfwSetErrorCallback(glfw_error_callback);
 	if (!glfwInit())
