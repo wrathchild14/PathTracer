@@ -399,4 +399,39 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# Models
 Sources/models
+
+# Cmake
+# Ignore build directory
+/build/
+
+# Ignore CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+*.cmake
+Makefile
+
+# Ignore compiled files
+*.o
+*.so
+*.lib
+*.dll
+*.exe
+*.out
+*.app
+*.iobj
+*.ilk
+*.ipdb
+*.pdb
+*.iobj
+*.exp
+
+# Ignore IDE/project files
+.idea/
+*.user
+*.suo
+*.sdf
+*.opensdf
+*.opendb

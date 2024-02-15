@@ -25,7 +25,7 @@
 #endif
 
 #include "Application.h"
-#include "ModelController.h"
+// #include "ModelController.h"
 
 static void glfw_error_callback(int error, const char* description)
 {
@@ -93,7 +93,7 @@ int main(int, char**)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	// Settings
-	auto* model_controller = new ModelController();
+	// auto* model_controller = new ModelController();
 
 	const auto application = new Application();
 	application->SetWidth(400);
@@ -160,31 +160,31 @@ int main(int, char**)
 			should_image_render = false;
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Magic"))
-		{
-			const auto image = application->GetImage();
-			model_controller->RunModel(image, "unet", width, height, 3);
-			const auto new_image = model_controller->GetResults();
-			if (new_image != nullptr)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-				             GL_UNSIGNED_BYTE, new_image);
-				application->SetImage(new_image);
-			}
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("General magic"))
-		{
-			const auto image = application->GetImage();
-			model_controller->RunModel(image, "general_unet", width, height, 3);
-			const auto new_image = model_controller->GetResults();
-			if (new_image != nullptr)
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-				             GL_UNSIGNED_BYTE, new_image);
-				application->SetImage(new_image);
-			}
-		}
+		// if (ImGui::Button("Magic"))
+		// {
+		// 	const auto image = application->GetImage();
+		// 	model_controller->RunModel(image, "unet", width, height, 3);
+		// 	const auto new_image = model_controller->GetResults();
+		// 	if (new_image != nullptr)
+		// 	{
+		// 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+		// 		             GL_UNSIGNED_BYTE, new_image);
+		// 		application->SetImage(new_image);
+		// 	}
+		// }
+		// ImGui::SameLine();
+		// if (ImGui::Button("General magic"))
+		// {
+		// 	const auto image = application->GetImage();
+		// 	model_controller->RunModel(image, "general_unet", width, height, 3);
+		// 	const auto new_image = model_controller->GetResults();
+		// 	if (new_image != nullptr)
+		// 	{
+		// 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+		// 		             GL_UNSIGNED_BYTE, new_image);
+		// 		application->SetImage(new_image);
+		// 	}
+		// }
 
 		ImGui::Checkbox("MP", &multi_processing);
 		ImGui::SameLine();
