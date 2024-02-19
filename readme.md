@@ -51,7 +51,18 @@ Opening the solution file should work
 
 ### Linux
 
-TBD
+Install OpenGL (Debian-based)
+```
+sudo apt install libglfw3-dev
+```
+
+Building and running (cmake)
+```bash
+cmake .
+make
+
+./Pathtracer
+```
 
 ## Random data
 
