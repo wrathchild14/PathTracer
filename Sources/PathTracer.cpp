@@ -244,27 +244,31 @@ void PathTracer::GenerateRandomImages(const int count, const bool parallel) cons
 
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; j <= this->image_width_; j++)
-				this->Render(i, j, 100, 30, false, 0.5, false, 4, false);
+				this->Render(i, j, 150, 40, false, 0.5, true, 2, false);
 
 		// save image - absolute path for now... (todo)
-		std::string location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\clean)";
-		std::string path = location + R"(\generated_image_)" + std::to_string(counter) + ".jpg";
+		std::string location = R"(/home/user/git/PathTracer/generated_images/clean)";
+		std::string path = location + R"(/generated_image_)" + std::to_string(counter) + ".jpg";
 		stbi_flip_vertically_on_write(true);
 		stbi_write_png(path.c_str(), image_width_, image_height_, 3,
 		               image_, image_width_ * 3);
 
+		std::cout << "Generated clean image " << counter << " at path " << path << std::endl;
 
 		// render noisy image
 		for (int i = this->image_height_; i >= 0; i--)
 			for (int j = 0; j <= this->image_width_; j++)
+				// focusing flag is set to false - the model will learn it
 				this->Render(i, j, 1, 5, false, 0.5, false, 2, true);
 
 		// save image - absolute path for now... (todo)
-		location = R"(C:\Users\wrath\Pictures\PathTracer\generated_images\noisy)";
-		path = location + R"(\generated_image_)" + std::to_string(counter) + ".jpg";
+		location = R"(/home/user/git/PathTracer/generated_images/noisy)";
+		path = location + R"(/generated_image_)" + std::to_string(counter) + ".jpg";
 		stbi_flip_vertically_on_write(true);
 		stbi_write_png(path.c_str(), image_width_, image_height_, 3,
 		               image_, image_width_ * 3);
+		
+		std::cout << "Generated noisy image " << counter << " at path " << path << std::endl;
 	}
 }
 
